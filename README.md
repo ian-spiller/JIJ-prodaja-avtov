@@ -1,1 +1,3 @@
-# Projektna-naloga-OPB
+# JIJ prodaja avtov
+
+Repozitorij je namenjen projektni nalogi pri predmetu Osnove podatkovnih baz. Spletna aplikacija bo omogočila prodajo in nakup novih ter rabljenih avtomobilov prijavljenim uporabnikom. Poleg tega bo kupec imel pregled nad možnimi kasko zavarovanji za posamezen avto pri različnih zavarovalnicah. Glede na to pri kateri zavarovalnici sklene kasko zavarovanje, ali ima od prej sklenjeno kakšno drugo zavarovanje, bo ponujen informativen izračun prvega rednega servisa pri različnih serviserjih (vsak ima lahko pogodbo z neko zavarovalnico, kar pomeni ugodnejši servis ob izbiri določene zavarovalnice).
