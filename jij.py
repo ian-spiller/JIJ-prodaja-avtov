@@ -68,3 +68,31 @@ def filter():
     seznam_modelov1=popravi_seznam(seznam_modelov)
     seznam_modelov1=[(1,"Vse")]+seznam_modelov1
     return template("filter.html",znamkeid=a,seznam_modelov=seznam_modelov1)
+
+
+
+def preveri_uporab_ime(ime):
+    cur.execute("SELECT ime FROM oseba")
+    a=cur.fetchall()
+    for x in a:
+        if x[0]==ime:
+            return FALSE
+
+def preveri(ime,geslo):
+    cur.execute("SELECT ime , geslo FROM oseba")
+    a=cur.fetchall()
+    for x in a:
+        if x[0]==ime and x[1]==geslo:
+            return TRUE
+
+def popravi_seznam(seznam):
+    popravljen_seznam=[seznam[0]]
+    for x in range(1,len(seznam)):
+        if (seznam[x])[0] is not (seznam[x-1])[0]:
+            popravljen_seznam=popravljen_seznam+[(((seznam[x])[0]),"Vse")] + [seznam[x]]
+        else:
+            popravljen_seznam=popravljen_seznam+[seznam[x]]
+    return popravljen_seznam
+
+
+run(host="localhost", port=8080, reloader=True)
