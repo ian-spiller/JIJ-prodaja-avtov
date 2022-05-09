@@ -1,0 +1,18 @@
+<html>
+<head>
+</head>
+<body>
+    <form action="/registracija" method="post">
+        <span>Ime:</span> <input name="ime" type="text" />
+        <span> Uporabniško ime: </span> <input name="uporabnisko_ime" type="text" />
+        <span>Geslo:</span> <input name="geslo" type="password" />
+        <span>Telefon:</span> <input name="tel" type="text" />
+        <select name="zav" id="zav">    
+            %for x in a:        
+                <option value="{{x[0]}}">{{x[1]}}</option>
+            %end
+        </select>
+        <input value = "Registracija" type="submit" />
+    </form>
+</body>
+</html> 
