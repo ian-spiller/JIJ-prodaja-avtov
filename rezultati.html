@@ -1,0 +1,24 @@
+<html>
+<head>
+</head>
+<body>
+    %for x in oglasi:
+            %if x[0] in ugoden_servis_znamka1:
+                <p style="color:greenyellow">{{x[0]}}</p>
+            %else:
+                <p>{{x[0]}}</p>
+            %end
+    %end
+    {{finan_ugodno1}}
+    %for x in seznam_premij1:
+        <li>{{x[0]}}</li>
+    %end
+    {{finan_ugodno2}}
+    %for x in seznam_premij2:
+        <li>{{x[0]}}</li>
+    %end
+    %for x in ugoden_servis_znamka1:
+        <li>{{x}}</li>
+    %end
+</body>
+</html> 
