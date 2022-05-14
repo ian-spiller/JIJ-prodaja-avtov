@@ -176,6 +176,47 @@ def rezultati():
         finan_ugodno1=finan_ugodno1,finan_ugodno2=finan_ugodno2,seznam_premij1=a1,seznam_premij2=a2,
         ugoden_servis_znamka1=ugoden_servis_znamka1)
 
+@get("/objava")
+def objava():
+    cur.execute("SELECT id , ime_znamke FROM znamka")
+    a=[(0,"Izberite")]+cur.fetchall()
+    cur.execute("SELECT * FROM modeli")
+    seznam_modelov=cur.fetchall()
+    seznam_modelov1=popravi_seznam1(seznam_modelov)
+    seznam_modelov1=[(1,"Izberite")]+seznam_modelov1
+    return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1)
+
+@post("/objava")
+def reg():
+    id_uporab=request.get_cookie("id_uporabnika",secret=skrivnost)
+    znamka_id=request.forms.get("znamka")
+    cena=request.forms.get("cena")
+    stanje=request.forms.get("stanje")
+    oblika=request.forms.get("oblika")
+    kilometri=request.forms.get("kilometri")
+    gorivo=request.forms.get("gorivo")
+    letnik=request.forms.get("letnik")
+    cur.execute("SELECT ime_znamke FROM znamka")
+    b=cur.fetchall()
+    model="Izberite"
+    for x in range(1,len(b)+1):
+        if request.forms.get("model{}".format(x))!="Izberite":
+            model=request.forms.get("model{}".format(x))
+            
+    if model=="Izberite":
+        return """<p>Obvezno polje</p>"""
+    if cena==None:
+        return """<p>Obvezno polje</p>"""
+    if kilometri==None:
+        return """<p>Obvezno polje</p>"""
+    if letnik==None:
+        return """<p>Obvezno polje</p>"""
+
+    cur.execute("INSERT INTO oglas (id_znamke,cena,stanje,oblika,kilometri,gorivo,letnik,model,id_osebe) VALUES(%s, %s, %s, %s, %s,%s,%s,%s,%s)",
+        (znamka_id,cena,stanje,oblika,kilometri,gorivo,letnik,model,(id_uporab[0])[0]))
+    baza.commit()
+    redirect("/izbira")
+
 def preveri_uporab_ime(ime):
     cur.execute("SELECT ime FROM oseba")
     a=cur.fetchall()
@@ -199,5 +240,13 @@ def popravi_seznam(seznam):
             popravljen_seznam=popravljen_seznam+[seznam[x]]
     return popravljen_seznam
 
+def popravi_seznam1(seznam):
+    popravljen_seznam=[seznam[0]]
+    for x in range(1,len(seznam)):
+        if (seznam[x])[0] is not (seznam[x-1])[0]:
+            popravljen_seznam=popravljen_seznam+[(((seznam[x])[0]),"Izberite")] + [seznam[x]]
+        else:
+            popravljen_seznam=popravljen_seznam+[seznam[x]]
+    return popravljen_seznam
 
 run(host="localhost", port=8080, reloader=True)
