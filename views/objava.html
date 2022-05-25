@@ -2,15 +2,24 @@
 <head>
 </head>
 <body>
+
+    <p id="seznam_znamk" style="display: none">
+        %heck=str(znamkeid[1][1])
+        %for x in znamkeid[2:]:
+        %heck=heck+ "," + str(x[1]) 
+        %end     
+            {{heck}}
+    </p>
+
     <form action="/objava" method="post">
         <label for="znamka">Znamka:</label>
         <select name="znamka" id="znamka" onchange='isci()'>    
             %for x in znamkeid:        
-                <option value="{{x[0]}}">{{x[1]}}</option>
+                <option value="{{x[1]}}">{{x[1]}}</option>
             %end
         </select>
 
-        <span> Cena do:</span> <input name="cena" type="number" />
+        <span> Cena:</span> <input name="cena" type="number" />
 
         <label for="stanje">Stanje:</label>
         <select name="stanje" id="stanje">
@@ -41,66 +50,38 @@
         <span> Letnik:</span> <input name="letnik" type="number" />
         
         %for x in znamkeid[1:]:
-        <select name="model{{x[0]}}" id="model{{x[0]}}" style="display: none"> 
+        <select name="model{{x[1]}}" id="model{{x[1]}}" style="display: none"> 
             %for y in seznam_modelov:
-                %if y[0]==x[0]: 
-                %print(x,y)     
+                %if y[0]==x[0]:      
                     <option value="{{y[1]}}">{{y[1]}}</option>
                 %end
             %end
         </select>
         %end
-
+        
         <script type="text/javascript">
             'use strict'
             function isci() {
                 let znamke = document.getElementById('znamka').value;
-                if (znamke == 0) {
-                        document.getElementById("model1").style.display = "none";
-                        document.getElementById("model2").style.display = "none";
-                        document.getElementById("model3").style.display = "none";
-                        document.getElementById("model4").style.display = "none";
-                        document.getElementById("model5").style.display = "none";
+                let seznam_znamk = document.getElementById('seznam_znamk').innerHTML;
+                let seznam_heck = (seznam_znamk.trim()).split(",");
+                console.log(seznam_heck)
+                for (let i = 0, len = seznam_heck.length; i < len; i++) {
+                    if (znamke == seznam_heck[i]) {
+                        console.log(seznam_heck[i])
+                        for (let j = 0, len = seznam_heck.length; j < len; j++) {
+                            if (seznam_heck[i] !=seznam_heck[j] ) {
+                                document.getElementById(`model${seznam_heck[j]}`).style.display = "none";
+                                console.log(`model${seznam_heck[j]}`)
+                            }
+                            else{
+                                document.getElementById(`model${seznam_heck[j]}`).style.display = "block";
+                            }
+                        }
                     }
-                if (znamke == 1) {
-                        document.getElementById("model1").style.display = "block";
-                        document.getElementById("model2").style.display = "none";
-                        document.getElementById("model3").style.display = "none";
-                        document.getElementById("model4").style.display = "none";
-                        document.getElementById("model5").style.display = "none";
-                    }
-                if (znamke == 2) {
-                        document.getElementById("model1").style.display = "none";
-                        document.getElementById("model2").style.display = "block";
-                        document.getElementById("model3").style.display = "none";
-                        document.getElementById("model4").style.display = "none";
-                        document.getElementById("model5").style.display = "none";
-                    }
-                if (znamke == 3) {
-                        document.getElementById("model1").style.display = "none";
-                        document.getElementById("model2").style.display = "none";
-                        document.getElementById("model3").style.display = "block";
-                        document.getElementById("model4").style.display = "none";
-                        document.getElementById("model5").style.display = "none";
-                    }
-                if (znamke == 4) {
-                        document.getElementById("model1").style.display = "none";
-                        document.getElementById("model2").style.display = "none";
-                        document.getElementById("model3").style.display = "none";
-                        document.getElementById("model4").style.display = "block";
-                        document.getElementById("model5").style.display = "none";
-                    }
-                if (znamke == 5) {
-                        document.getElementById("model1").style.display = "none";
-                        document.getElementById("model2").style.display = "none";
-                        document.getElementById("model3").style.display = "none";
-                        document.getElementById("model4").style.display = "none";
-                        document.getElementById("model5").style.display = "block";
-                    }
-                }    
-            </script>
-        
-        
+                }
+            }
+        </script>
 
 <input value = "Objavi" type="submit" />
 </form>

@@ -1,0 +1,18 @@
+<html>
+<head>
+</head>
+<body>
+    <form action="/dodaj_znamko" method="post">
+        <span> Znamka:</span> <input name="dodana_znamka" type="text" />
+
+        <label for="id_serviserja">Serviser:</label>
+        <select name="id_serviserja" id="id_serviserja">    
+            %for x in podatki_serviserja:        
+                <option value="{{x[0]}}">{{x[1]}}</option>
+            %end
+        </select>
+
+        <input value = "Dodaj" type="submit" />
+    </form>
+</body>
+</html> 

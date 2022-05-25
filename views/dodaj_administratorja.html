@@ -1,0 +1,17 @@
+<html>
+<head>
+</head>
+<body>
+    <form action="/dodaj_administratorja" method="post">
+
+        <label for="oseba">oseba:</label>
+        <select name="oseba" id="oseba">    
+            %for x in seznam_oseb:        
+                <option value="{{x[0]}}">{{x[0]}}</option>
+            %end
+        </select>
+
+        <input value = "Dodaj" type="submit" />
+    </form>
+</body>
+</html> 

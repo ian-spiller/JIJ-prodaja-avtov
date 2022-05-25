@@ -1,0 +1,20 @@
+<html>
+<head>
+</head>
+<body>
+
+<form action="/dodaj_model" method="post">
+    <label for="znamka">Znamka:</label>
+    <select name="znamka" id="znamka">    
+        %for x in seznam_znamk:        
+            <option value="{{x[0]}}">{{x[1]}}</option>
+        %end
+    </select>
+
+    <span> Model:</span> <input name="dodan_model" type="text" />
+
+    <input value = "Dodaj model" type="submit" />
+</form>
+
+</body>
+</html> 

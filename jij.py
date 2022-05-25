@@ -22,10 +22,14 @@ def prijava():
         return """<p> Prosimo izplonite vsa polja</p>"""
     if not preveri(uporabnisko_ime,geslo):
         """<p> Napačni podatki za prijavo. Poskusite <a href="/prijava">še enkrat</a> ali pa se <a href="/registracija">registrirajte</a> </p>"""
-    cur.execute("SELECT id  FROM oseba WHERE uporabnisko_ime=%s",(uporabnisko_ime,))
+    cur.execute("SELECT id,administrator FROM oseba WHERE uporabnisko_ime=%s",(uporabnisko_ime,))
     a=cur.fetchall()
-    response.set_cookie("id_uporabnika",a,secret=skrivnost)
-    redirect("/izbira")
+    print(a[0][0])
+    response.set_cookie("id_uporabnika",str(a[0][0]),secret=skrivnost)
+    if a[0][1]==1:
+        redirect("/izbira_administrator")
+    else:
+        redirect("/izbira")
 
 @get('/odjava')
 def odjava_get():
@@ -57,6 +61,10 @@ def reg():
 @get("/izbira")
 def izbira():
     return template("izbira.html")
+
+@get("/izbira_administrator")
+def izbira_administrator():
+    return template("izbira_administrator.html")
 
 @get("/filter")
 def filter():
@@ -107,17 +115,27 @@ def rezultati():
     ugoden_servis_znamka=cur.fetchall()
     ugoden_servis_znamka1=[]
     for x in ugoden_servis_znamka:
-        ugoden_servis_znamka1=ugoden_servis_znamka1+[str(x[0])]
+        if not str(x[0]) in ugoden_servis_znamka1:
+            ugoden_servis_znamka1=ugoden_servis_znamka1+[str(x[0])]
     print(ugoden_servis_znamka1)
 
 
     cur.execute("SELECT ime_znamke FROM znamka")
     b=cur.fetchall()
+    print(b)
+    seznam_b=[]
+    for x in b:
+        seznam_b=seznam_b+[str(x[0])]
+    print(seznam_b)
+    
     model="Vse"
-    for x in range(1,len(b)+1):
-        if request.query["model{}".format(x)]!="Vse":
-            model=request.query["model{}".format(x)]
+    for x in range(0,len(seznam_b)):
+        print("model{}".format(seznam_b[x]))
+        print(request.query["model{}".format(seznam_b[x])])
+        if request.query["model{}".format(seznam_b[x])]!="Vse":
+            model=request.query["model{}".format(seznam_b[x])]
 
+    
     cur.execute("SELECT model FROM modeli")
     c=cur.fetchall()
     if model=="Vse":
@@ -189,33 +207,99 @@ def objava():
 @post("/objava")
 def reg():
     id_uporab=request.get_cookie("id_uporabnika",secret=skrivnost)
-    znamka_id=request.forms.get("znamka")
+    znamka=request.forms.get("znamka")
     cena=request.forms.get("cena")
     stanje=request.forms.get("stanje")
     oblika=request.forms.get("oblika")
     kilometri=request.forms.get("kilometri")
     gorivo=request.forms.get("gorivo")
     letnik=request.forms.get("letnik")
+
+    cur.execute("SELECT id , ime_znamke FROM znamka")
+    a=cur.fetchall()
+    print(a)
+    for x in a:
+        if x[1]==znamka:
+            znamka_id=x[0]
+    print(znamka_id)
+
+    model="Izberite"
     cur.execute("SELECT ime_znamke FROM znamka")
     b=cur.fetchall()
-    model="Izberite"
-    for x in range(1,len(b)+1):
-        if request.forms.get("model{}".format(x))!="Izberite":
-            model=request.forms.get("model{}".format(x))
+    seznam_b=[]
+
+    for x in b:
+        seznam_b=seznam_b+[str(x[0])]
+    print(seznam_b)
+
+    for x in range(0,len(seznam_b)):
+        print("model{}".format(seznam_b[x]))
+        print(request.forms.get("model{}".format(seznam_b[x])))
+        if request.forms.get("model{}".format(seznam_b[x])) !="Izberite":
+            model=request.forms.get("model{}".format(seznam_b[x]))
             
     if model=="Izberite":
-        return """<p>Obvezno polje</p>"""
-    if cena==None:
-        return """<p>Obvezno polje</p>"""
-    if kilometri==None:
-        return """<p>Obvezno polje</p>"""
-    if letnik==None:
-        return """<p>Obvezno polje</p>"""
+        return """<p>Obvezno polje model</p>"""
+    if cena=="":
+        return """<p>Obvezno polje cena</p>"""
+    if kilometri=="":
+        return """<p>Obvezno polje kilometri</p>"""
+    if letnik=="":
+        return """<p>Obvezno polje letnik</p>"""
 
     cur.execute("INSERT INTO oglas (id_znamke,cena,stanje,oblika,kilometri,gorivo,letnik,model,id_osebe) VALUES(%s, %s, %s, %s, %s,%s,%s,%s,%s)",
         (znamka_id,cena,stanje,oblika,kilometri,gorivo,letnik,model,(id_uporab[0])[0]))
     baza.commit()
     redirect("/izbira")
+
+
+@get("/dodaj_znamko")
+def dodaj_znamko_get():
+    cur.execute("SELECT id,ime_serviserja FROM serviser")
+    a=cur.fetchall()
+    seznam=[]
+    for x in a:
+        seznam=seznam+[x[0]]
+    print(seznam)
+    return template("dodaj_znamko.html",podatki_serviserja=a)
+
+@post("/dodaj_znamko")
+def dodaj_znamko_post():
+    dodana_znamka=request.forms.get("dodana_znamka")
+    id_serviserja=request.forms.get("id_serviserja")
+    cur.execute("INSERT INTO znamka (ime_znamke,id_serviserja) VALUES(%s, %s)",
+        (dodana_znamka,id_serviserja))
+    baza.commit()
+    redirect("/izbira_administrator")
+
+@get("/dodaj_model")
+def dodaj_model_get():
+    cur.execute("SELECT id , ime_znamke FROM znamka")
+    a=cur.fetchall()
+    return template("dodaj_model.html",seznam_znamk=a)
+
+@post("/dodaj_model")
+def dodaj_model_post():
+    znamka=request.forms.get("znamka")
+    dodan_model=request.forms.get("dodan_model")
+    cur.execute("INSERT INTO modeli VALUES(%s, %s)",
+        (znamka,dodan_model))
+    baza.commit()
+    redirect("/izbira_administrator")
+
+@get("/dodaj_administratorja")
+def dodaj_administratorja():
+    cur.execute("SELECT uporabnisko_ime FROM oseba")
+    a=cur.fetchall()
+    print(a)
+    return template("dodaj_administratorja.html",seznam_oseb=a)
+
+@post("/dodaj_administratorja")
+def dodaj_administratorja():
+    oseba=request.forms.get("oseba")
+    cur.execute("UPDATE oseba SET administrator = 1 WHERE uporabnisko_ime = %s",(oseba,))
+    baza.commit()
+    redirect("/izbira_administrator")
 
 def preveri_uporab_ime(ime):
     cur.execute("SELECT ime FROM oseba")

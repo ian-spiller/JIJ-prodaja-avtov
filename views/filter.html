@@ -2,7 +2,13 @@
 <head>
 </head>
 <body>
-    
+    <p id="seznam_znamk" style="display: none">
+        %heck=str(znamkeid[1][1])
+        %for x in znamkeid[2:]:
+        %heck=heck+ "," + str(x[1]) 
+        %end     
+            {{heck}}
+    </p>
     <form action="/rezultati" method="get">
         <label for="znamka">Znamka:</label>
         <select name="znamka" id="znamka" onchange='isci()'>    
@@ -45,7 +51,7 @@
         <span> Letnik:</span> <input name="letnik" type="number" />
         
         %for x in znamkeid[1:]:
-        <select name="model{{x[0]}}" id="model{{x[0]}}" style="display: none"> 
+        <select name="model{{x[1]}}" id="model{{x[1]}}" style="display: none"> 
             %for y in seznam_modelov:
                 %if y[0]==x[0]:      
                     <option value="{{y[1]}}">{{y[1]}}</option>
@@ -58,44 +64,28 @@
             'use strict'
             function isci() {
                 let znamke = document.getElementById('znamka').value;
-                if (znamke == "Volkswagen") {
-                        document.getElementById("model1").style.display = "block";
-                        document.getElementById("model2").style.display = "none";
-                        document.getElementById("model3").style.display = "none";
-                        document.getElementById("model4").style.display = "none";
-                        document.getElementById("model5").style.display = "none";
+                let seznam_znamk = document.getElementById('seznam_znamk').innerHTML;
+                let seznam_heck = (seznam_znamk.trim()).split(",");
+                console.log(seznam_heck)
+                for (let i = 0, len = seznam_heck.length; i < len; i++) {
+                    if (znamke == seznam_heck[i]) {
+                        console.log(seznam_heck[i])
+                        for (let j = 0, len = seznam_heck.length; j < len; j++) {
+                            if (seznam_heck[i] !=seznam_heck[j] ) {
+                                document.getElementById(`model${seznam_heck[j]}`).style.display = "none";
+                                console.log(`model${seznam_heck[j]}`)
+                            }
+                            else{
+                                document.getElementById(`model${seznam_heck[j]}`).style.display = "block";
+                            }
+                        }
                     }
-                if (znamke == "Porsche") {
-                        document.getElementById("model1").style.display = "none";
-                        document.getElementById("model2").style.display = "block";
-                        document.getElementById("model3").style.display = "none";
-                        document.getElementById("model4").style.display = "none";
-                        document.getElementById("model5").style.display = "none";
-                    }
-                if (znamke == "BMW") {
-                        document.getElementById("model1").style.display = "none";
-                        document.getElementById("model2").style.display = "none";
-                        document.getElementById("model3").style.display = "block";
-                        document.getElementById("model4").style.display = "none";
-                        document.getElementById("model5").style.display = "none";
-                    }
-                if (znamke == "Mercedes Benz") {
-                        document.getElementById("model1").style.display = "none";
-                        document.getElementById("model2").style.display = "none";
-                        document.getElementById("model3").style.display = "none";
-                        document.getElementById("model4").style.display = "block";
-                        document.getElementById("model5").style.display = "none";
-                    }
-                if (znamke == "Škoda") {
-                        document.getElementById("model1").style.display = "none";
-                        document.getElementById("model2").style.display = "none";
-                        document.getElementById("model3").style.display = "none";
-                        document.getElementById("model4").style.display = "none";
-                        document.getElementById("model5").style.display = "block";
-                    }
-                }    
-            </script>
+                }
+            }
+        </script>
+
 <input value = "Išči" type="submit" />
 </form>
+
 </body>
 </html> 
