@@ -1,38 +1,50 @@
-<html>
-<head>
-</head>
-<body>
+%setdefault("napaka","")
+%rebase("base.html",naslov="Rezultati iskanja",uporabnik=uporabnik,napaka=napaka)
+
+<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+
+  <table class="table mt-5 sortable">
+    <thead>
+    <tr>
+        <th scope="col">Znamka</th>
+        <th scope="col">Model</th>
+        <th scope="col">Cena</th>
+        <th scope="col">Stanje</th>
+        <th scope="col">Oblika</th>
+        <th scope="col">Kilometri</th>
+        <th scope="col">Gorivo</th>
+        <th scope="col" class="text-center">Cena kasko zavraovanja</th>
+        <th scope="col" class="text-center">Ugoden prvi servis</th>
+    </tr>
+    </thead>
+    <tbody>
     %if len(oglasi) !=0:
         %for x in oglasi:
-        
-            %if x[0] in ugoden_servis_znamka1:
-                <p style="color:greenyellow">{{x[0]}} Cena:{{x[1]}} Stanje:{{x[2]}}</p>
+        <tr>
+            %if x[0]=="Skoda":
+                <td>Škoda</td>
             %else:
-                <p>{{x[0]}} Cena:{{x[1]}} Stanje:{{x[2]}}</p>
+                <td>{{x[0]}}</td>  
             %end
+                <td>{{x[6]}}</td>
+                <td>{{x[1]}} EUR</td>
+                <td>{{x[2]}}</td>
+                <td>{{x[3]}}</td>
+                <td>{{x[4]}} km</td>
+                <td>{{x[5]}}</td>
+                
+                %if int(x[1]) > 50000:
+                %a=int((x[1])*finan_ugodno2)
+                <td class="text-center">{{a}} EUR</td>
+                %else:
+                %a=int((x[1])*finan_ugodno1)
+                <td class="text-center">{{a}} EUR</td>
+                %end
+                %if x[0] in ugoden_servis_znamka1:
+                <td class="text-center">DA</td>
+                %else:
+                <td class="text-center">NE</td>
+                %end
+        </tr>
         %end
-    %else:
-        <p>Za vaše iskanje ni rezultatov</p>
     %end
-
-    <p>Cena financiranja pod 50000</p>
-    <p>Financiranje s popustom pri vaši zavarovalnici: {{finan_ugodno1}}</p>
-    <p> Financiranje pri ostalih zavarovalnicah</p>
-    %for x in seznam_premij1:
-        <li>{{x[0]}}</li>
-    %end
-
-
-    <p> Cena financiranja nad 50000</p>
-    <p>Financiranje s popustom pri vaši zavarovalnici: {{finan_ugodno2}}</p>
-    <p>Financiranje pri ostalih zavarovalnicah:</p>
-    %for x in seznam_premij2:
-        <li>{{x[0]}}</li>
-    %end
-
-    <p>Znamke pri katerih imate ugoden servis:</p>
-    %for x in ugoden_servis_znamka1:
-        <li>{{x}}</li>
-    %end
-</body>
-</html> 

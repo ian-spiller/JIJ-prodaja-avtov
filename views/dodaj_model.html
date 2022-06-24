@@ -1,20 +1,28 @@
-<html>
-<head>
-</head>
-<body>
+% setdefault("napaka","")
+%rebase("base.html",naslov="Dodaja novega modela vozila",uporabnik=1,napaka=napaka)
 
-<form action="/dodaj_model" method="post">
-    <label for="znamka">Znamka:</label>
-    <select name="znamka" id="znamka">    
-        %for x in seznam_znamk:        
-            <option value="{{x[0]}}">{{x[1]}}</option>
+<div class="container w-50">   
+<form action="{{url('dodaj_model')}}" method="post">
+    <div class="text-center mt-3">
+        <label for="znamka">Znamka:</label>
+        <select class="form-select" name="znamka" id="znamka">    
+        %for x in seznam_znamk:
+            %if x[1]=="Skoda":
+                <option value="15">Škoda</option>
+            %else:          
+                <option value="{{x[0]}}">{{x[1]}}</option>
+            %end
         %end
-    </select>
+        </select>
+    </div>
 
-    <span> Model:</span> <input name="dodan_model" type="text" />
+    <div class="text-center mt-3">
+        <label for="model">Model:</label>
+        <input class="form-control" name="dodan_model" id="model" type="text" />
+    </div>
 
-    <input value = "Dodaj model" type="submit" />
+    <div class="text-center mt-3">
+        <input class="form-select mb-5 mt-3 btn btn-danger" value = "Dodaj" type="submit" />
+    </div>
 </form>
-
-</body>
-</html> 
+</div>

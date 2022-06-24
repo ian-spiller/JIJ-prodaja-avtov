@@ -115,32 +115,25 @@ def filter():
 @get("/rezultati")
 def rezultati():
     znamka=request.query["znamka"]
-    znamka=znamka.encode("ISO-8859-1")
-    znamka=znamka.decode("utf-8")
     cena=request.query["cena"]
     stanje=request.query["stanje"]
     oblika=request.query["oblika"]
     kilometri=request.query["kilometri"]
     gorivo=request.query["gorivo"]
 
-    id_uporab=request.get_cookie("id_uporabnika",secret=skrivnost)
+    cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
+    if cookie is None:
+        redirect(url("/"))
+
+    id_uporab=cookie[0]
+    uporabnik=int(cookie[1])
     cur.execute("SELECT id_zavarovalnice FROM oseba WHERE id=%s",((id_uporab[0])[0],))
     id_zav=cur.fetchall()
     id_zav=id_zav[0]
-    print(id_zav)
 
-    cur.execute("SELECT premija1, popust FROM zavarovalnica WHERE id=%s",id_zav)
-    premija_popust1=cur.fetchall()
-    finan_ugodno1=(1-(premija_popust1[0])[1])*((premija_popust1[0])[0])
-    cur.execute("SELECT premija1 FROM zavarovalnica WHERE id != %s",id_zav)
-    a1=cur.fetchall()
-
-
-    cur.execute("SELECT premija2, popust FROM zavarovalnica WHERE id=%s",id_zav)
-    premija_popust2=cur.fetchall()
-    finan_ugodno2=(1-(premija_popust2[0])[1])*((premija_popust2[0])[0])
-    cur.execute("SELECT premija2 FROM zavarovalnica WHERE id != %s",id_zav)
-    a2=cur.fetchall()
+    cur.execute("SELECT premija1, premija2 FROM zavarovalnica WHERE id=%s",id_zav)
+    premija=cur.fetchall()
+    
     
     cur.execute("""SELECT ime_znamke FROM oglas 
                     JOIN znamka ON oglas.id_znamke = znamka.id 
@@ -152,25 +145,14 @@ def rezultati():
     for x in ugoden_servis_znamka:
         if not str(x[0]) in ugoden_servis_znamka1:
             ugoden_servis_znamka1=ugoden_servis_znamka1+[str(x[0])]
-    print(ugoden_servis_znamka1)
-
-
-    cur.execute("SELECT ime_znamke FROM znamka")
-    b=cur.fetchall()
-    print(b)
-    seznam_b=[]
-    for x in b:
-        seznam_b=seznam_b+[str(x[0])]
-    print(seznam_b)
     
     model="Vse"
-    for x in range(0,len(seznam_b)):
-        print("model{}".format(seznam_b[x]))
-        print(request.query["model{}".format(seznam_b[x])])
-        if request.query["model{}".format(seznam_b[x])]!="Vse":
-            model=request.query["model{}".format(seznam_b[x])]
+    if znamka!="Vse":
+        if request.query["model{}".format(znamka)]!="Vse":
+            model=request.query["model{}".format(znamka)]
+    else:
+        model="Vse"
 
-    
     cur.execute("SELECT model FROM modeli")
     c=cur.fetchall()
     if model=="Vse":
@@ -225,9 +207,14 @@ def rezultati():
                             'oblika':oblika, 'kilometri':kilometri , 'gorivo':gorivo,
                             'model':model })
     oglasi=cur.fetchall()
+    if len(oglasi)==0:
+        napaka = "Za vaše iskanje ni rezultatov"
+        return template("rezultati.html",oglasi=oglasi,
+            finan_ugodno1=premija[0][0],finan_ugodno2=premija[0][1],
+            ugoden_servis_znamka1=ugoden_servis_znamka1,uporabnik=uporabnik,napaka=napaka)
     return template("rezultati.html",oglasi=oglasi,
-        finan_ugodno1=finan_ugodno1,finan_ugodno2=finan_ugodno2,seznam_premij1=a1,seznam_premij2=a2,
-        ugoden_servis_znamka1=ugoden_servis_znamka1)
+        finan_ugodno1=premija[0][0],finan_ugodno2=premija[0][1],
+        ugoden_servis_znamka1=ugoden_servis_znamka1,uporabnik=uporabnik)
 
 @get("/objava")
 def objava():
@@ -308,25 +295,42 @@ def dodaj_znamko_post():
     redirect("/izbira_administrator")
 
 @get("/dodaj_model")
-def dodaj_model_get():
+def dodaj_model():
+    cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
+    if cookie is None:
+        redirect(url("/"))
+
     cur.execute("SELECT id , ime_znamke FROM znamka")
     a=cur.fetchall()
     return template("dodaj_model.html",seznam_znamk=a)
 
 @post("/dodaj_model")
-def dodaj_model_post():
+def dodaj_model():
     znamka=request.forms.get("znamka")
     dodan_model=request.forms.get("dodan_model")
+
+    cur.execute("SELECT id , ime_znamke FROM znamka")
+    a=cur.fetchall()
+
+    if dodan_model=="":
+        return template("dodaj_model.html",seznam_znamk=a,napaka="Prosimo izpolnite vsa polja")
+    
+    if "Ž" in dodan_model or "ž" in dodan_model or "Š" in dodan_model or "š" in dodan_model or "Č" in dodan_model or "č" in dodan_model:
+        return template("dodaj_znamko.html", napaka="Ime znamke nesme vključevati šumnikov",a=a)
+
     cur.execute("INSERT INTO modeli VALUES(%s, %s)",
         (znamka,dodan_model))
     baza.commit()
-    redirect("/izbira_administrator")
+    redirect(url("/izbira_administrator"))
 
 @get("/dodaj_administratorja")
 def dodaj_administratorja():
-    cur.execute("SELECT uporabnisko_ime FROM oseba")
+    cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
+    if cookie is None:
+        redirect(url("/"))
+    
+    cur.execute("SELECT uporabnisko_ime FROM oseba WHERE administrator=0")
     a=cur.fetchall()
-    print(a)
     return template("dodaj_administratorja.html",seznam_oseb=a)
 
 @post("/dodaj_administratorja")
@@ -334,7 +338,7 @@ def dodaj_administratorja():
     oseba=request.forms.get("oseba")
     cur.execute("UPDATE oseba SET administrator = 1 WHERE uporabnisko_ime = %s",(oseba,))
     baza.commit()
-    redirect("/izbira_administrator")
+    redirect(url("/izbira_administrator"))
 
 def preveri_uporab_ime(ime):
     cur.execute("SELECT uporabnisko_ime FROM oseba")
