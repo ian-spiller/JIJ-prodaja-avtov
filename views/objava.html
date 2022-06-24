@@ -1,7 +1,5 @@
-<html>
-<head>
-</head>
-<body>
+%setdefault("napaka","")
+%rebase("base.html",naslov="Objava oglasa",napaka=napaka)
 
     <p id="seznam_znamk" style="display: none">
         %heck=str(znamkeid[1][1])
@@ -11,80 +9,115 @@
             {{heck}}
     </p>
 
-    <form action="/objava" method="post">
-        <label for="znamka">Znamka:</label>
-        <select name="znamka" id="znamka" onchange='isci()'>    
-            %for x in znamkeid:        
-                <option value="{{x[1]}}">{{x[1]}}</option>
-            %end
-        </select>
+    <div class="container w-50">    
+        <form action="{{url('objava')}}" method="post">
+            <div class="text-center mt-5">
+                <label for="znamka">Izberite znamko:</label>
+                <select class="form-select" name="znamka" id="znamka" onchange='isci()'>    
+                    %for x in znamkeid:
+                        %if x[1]=="Skoda":
+                            <option value="Skoda">Škoda</option>
+                        %else:          
+                            <option value="{{x[1]}}">{{x[1]}}</option>
+                        %end
+                    %end
+                </select>
+            </div>
 
-        <span> Cena:</span> <input name="cena" type="number" />
-
-        <label for="stanje">Stanje:</label>
-        <select name="stanje" id="stanje">
-            <option value="rabljeno">Rabljeno</option>
-            <option value="novo">Novo</option>
-            <option value="testno">Testno</option>
-        </select>
-
-        <label for="oblika">Oblika:</label>
-        <select name="oblika" id="oblika">
-            <option value="SUV">SUV</option>
-            <option value="limuzina">Limuzina</option>
-            <option value="karavan">Karavan</option>
-            <option value="coupe">Coupe</option>
-            <option value="kabrijolet">Kabrijolet</option>
-        </select>
-
-        <span> Kilometri:</span> <input name="kilometri" type="number" />
-
-        <label for="gorivo">Gorivo:</label>
-        <select name="gorivo" id="gorivo">
-            <option value="bencin">Bencin</option>
-            <option value="dizel">Dizel</option>
-            <option value="hibrid">Hibrid</option>
-            <option value="elektrika">Elektrika</option>
-        </select>
-        
-        <span> Letnik:</span> <input name="letnik" type="number" />
-        
-        %for x in znamkeid[1:]:
-        <select name="model{{x[1]}}" id="model{{x[1]}}" style="display: none"> 
-            %for y in seznam_modelov:
-                %if y[0]==x[0]:      
-                    <option value="{{y[1]}}">{{y[1]}}</option>
+            %for x in znamkeid[1:]:
+                <div class="text-center mt-3" id="test{{x[1]}}" style="display: none">
+                <label for="model{{x[1]}}">Model:</label>
+                <select class="form-select" name="model{{x[1]}}" id="model{{x[1]}}"> 
+                %for y in seznam_modelov:
+                    %if y[0]==x[0]:      
+                        <option value="{{y[1]}}">{{y[1]}}</option>
+                    %end
                 %end
-            %end
-        </select>
-        %end
-        
-        <script type="text/javascript">
-            'use strict'
-            function isci() {
-                let znamke = document.getElementById('znamka').value;
-                let seznam_znamk = document.getElementById('seznam_znamk').innerHTML;
-                let seznam_heck = (seznam_znamk.trim()).split(",");
-                console.log(seznam_heck)
-                for (let i = 0, len = seznam_heck.length; i < len; i++) {
-                    if (znamke == seznam_heck[i]) {
-                        console.log(seznam_heck[i])
-                        for (let j = 0, len = seznam_heck.length; j < len; j++) {
-                            if (seznam_heck[i] !=seznam_heck[j] ) {
-                                document.getElementById(`model${seznam_heck[j]}`).style.display = "none";
-                                console.log(`model${seznam_heck[j]}`)
+                </select>
+                </div>
+                %end
+
+            <div class="text-center mt-3">
+                <label for="cena">Cena:</label>
+                <input class="form-control" id="cena" name="cena" type="number"/>
+            </div>
+    
+            <div class="text-center mt-3">
+                <label for="stanje">Stanje:</label>
+                <select class="form-select" name="stanje" id="stanje">
+                        <option value="Vse">Vse</option>
+                        <option value="rabljeno">Rabljeno</option>
+                        <option value="novo">Novo</option>
+                        <option value="testno">Testno</option>
+                </select>
+            </div>
+    
+            <div class="text-center mt-3">
+                    <label for="oblika">Oblika:</label>
+                    <select class="form-select" name="oblika" id="oblika">
+                        <option value="Vse">Vse</option>
+                        <option value="SUV">SUV</option>
+                        <option value="limuzina">Limuzina</option>
+                        <option value="karavan">Karavan</option>
+                        <option value="coupe">Coupe</option>
+                        <option value="kabrijolet">Kabrijolet</option>
+                    </select>
+                </div>
+    
+                <div class="text-center mt-3">
+                    <label for="kilometri">Prevoženi kilometri:</label>
+                    <input class="form-control" id="kilometri" name="kilometri" type="number"/>
+                </div>
+
+                <div class="text-center mt-3">
+                    <label for="letnik">Letnik:</label>
+                    <input class="form-control" id="letnik" name="letnik" type="number"/>
+                </div>
+    
+                <div class="text-center mt-3">
+                    <label for="gorivo">Gorivo:</label>
+                    <select class="form-select" name="gorivo" id="gorivo">
+                        <option value="Vse">Vse</option>
+                        <option value="bencin">Bencin</option>
+                        <option value="dizel">Dizel</option>
+                        <option value="hibrid">Hibrid</option>
+                        <option value="elektrika">Elektrika</option>
+                    </select>
+                </div>
+    
+                <script type="text/javascript">
+                    'use strict'
+                    function isci() {
+                        let znamke = document.getElementById('znamka').value;
+                        let seznam_znamk = document.getElementById('seznam_znamk').innerHTML;
+                        let seznam_heck = (seznam_znamk.trim()).split(",");
+                        console.log(seznam_heck)
+                        var a=0
+                        for (let i = 0, len = seznam_heck.length; i < len; i++) {
+                            if (znamke == seznam_heck[i]) {
+                                var a=1
+                                console.log(a)
+                                for (let j = 0, len = seznam_heck.length; j < len; j++) {
+                                    if (seznam_heck[i] !=seznam_heck[j] ) {
+                                        document.getElementById(`test${seznam_heck[j]}`).style.display = "none";
+                                        console.log(`model${seznam_heck[j]}`)
+                                    }
+                                    else{
+                                        document.getElementById(`test${seznam_heck[j]}`).style.display = "block";
+                                    }
+                                }
                             }
-                            else{
-                                document.getElementById(`model${seznam_heck[j]}`).style.display = "block";
+                        }
+                        console.log(a)
+                        if(a != 1){
+                            for (let j = 0, len = seznam_heck.length; j < len; j++) {
+                            document.getElementById(`model${seznam_heck[j]}`).style.display = "none";
                             }
                         }
                     }
-                }
-            }
-        </script>
-
-<input value = "Objavi" type="submit" />
-</form>
-
-</body>
-</html> 
+                </script>
+                <input class="form-control mb-5 mt-3 btn btn-danger" value = "Objava" type="submit" />
+            </form>
+    
+        </div>
+    

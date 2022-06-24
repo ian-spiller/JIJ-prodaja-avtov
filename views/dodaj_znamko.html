@@ -1,18 +1,29 @@
-<html>
-<head>
-</head>
-<body>
-    <form action="/dodaj_znamko" method="post">
-        <span> Znamka:</span> <input name="dodana_znamka" type="text" />
+% setdefault("napaka","")
+%rebase("base.html",naslov="Dodaja znake vozila",uporabnik=1,napaka=napaka)
 
-        <label for="id_serviserja">Serviser:</label>
-        <select name="id_serviserja" id="id_serviserja">    
+<div class="container w-50">
+    <form action="{{url('dodaj_znamko')}}" method="post">
+        <div class="text-center mt-3">
+            <label for="dodana_znamka">Znamka:</label>
+            <input class="form-control" id="dodana_znamka" name="dodana_znamka" type="text" />
+        </div>
+
+        <div class="text-center mt-3">
+            <label for="model">Model:</label>
+            <input class="form-control" id="model" name="model" type="text" />
+        </div>
+
+        <div class="text-center mt-3">
+            <label for="id_serviserja">Serviser:</label>
+            <select class="form-select" name="id_serviserja" id="id_serviserja">    
             %for x in podatki_serviserja:        
                 <option value="{{x[0]}}">{{x[1]}}</option>
             %end
-        </select>
+            </select>
+        </div>
 
-        <input value = "Dodaj" type="submit" />
+        <div class="text-center mt-5">
+        <input class="form-select mb-5 mt-3 btn btn-danger" value = "Dodaj" type="submit" />
+        </div>
     </form>
-</body>
-</html> 
+</div>
