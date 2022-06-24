@@ -400,15 +400,16 @@ def brisanje_modela():
     print(b)
     print(model)
     if len(c)==1 and nov_model=="":
-        return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a,napaka="Prosimo izpolnite vsa polja1")
+        return template("brisanje_oglasa.html",seznam_modelov=seznam_modelov,znamkeid=a,napaka="Prosimo izpolnite vsa polja")
     if model=="": 
-        return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a,napaka="Prosimo izpolnite vsa polja")
+        return template("brisanje_oglasa.html",seznam_modelov=seznam_modelov,znamkeid=a,napaka="Prosimo izpolnite vsa polja")
     if len(c)==1 and nov_model!="":
         cur.execute("INSERT INTO modeli VALUES(%s, %s)",
             (b[0],nov_model))
         baza.commit()
     
     cur.execute("DELETE FROM modeli WHERE model = %s",(model,))
+    cur.execute("DELETE FROM oglas WHERE model = %s",(model,))
     baza.commit()
     redirect(url("izbira_administrator"))
 
