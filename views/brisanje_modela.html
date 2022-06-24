@@ -1,0 +1,97 @@
+% setdefault("napaka","")
+%rebase("base.html",naslov="Izbris modela",uporabnik=1,napaka=napaka)
+
+<div class="container w-50">    
+    <form action="{{url('brisanje_modela')}}" method="post">
+        <div class="text-center mt-5">
+            <label for="znamka">Izberite znamko:</label>
+            <select class="form-select" name="znamka" id="znamka" onchange='isci()'>    
+                %for x in znamkeid:
+                    %if x[1]=="Skoda":
+                        <option value="Skoda">Škoda</option>
+                    %else:        
+                        <option value="{{x[1]}}">{{x[1]}}</option>
+                    %end
+                %end
+            </select>
+        </div>
+
+        <div class="text-center mt-3" id="testVolkswagen">
+            <label for="model{{x[1]}}">Model:</label>
+            <select class="form-select" name="model{{x[1]}}" id="model{{x[1]}}"> 
+            %for y in seznam_modelov:
+                %if y[0]==1:      
+                    <option value="{{y[1]}}">{{y[1]}}</option>
+                %end
+            %end
+            </select>
+        </div>
+
+        %seznam=[]
+        %for z in seznam_modelov: 
+            %seznam=seznam+[str(z[0])]
+        %end
+
+        %for x in znamkeid[1:]:
+            <div class="text-center mt-3" id="test{{x[1]}}" style="display: none">
+            %if seznam.count(str(x[0]))==1:
+            <div class="text-center mt-3">
+                <label for="novmodel{{x[1]}}">Ker imamo shranjen samo en model te znamke morate dodati novega preden izbrišete starega:</label>
+                <input class="form-control" id="novmodel{{x[1]}}" name="novmodel{{x[1]}}" type="text" />
+            </div>
+            %end
+            <label for="model{{x[1]}}">Model:</label>
+            <select class="form-select" name="model{{x[1]}}" id="model{{x[1]}}"> 
+            %for y in seznam_modelov:
+                %if y[0]==x[0]:      
+                    <option value="{{y[1]}}">{{y[1]}}</option>
+                %end
+            %end
+            </select>
+            </div>
+        %end
+
+        <p id="seznam_znamk" style="display: none">
+            %heck=znamkeid[0][1]
+            %for x in znamkeid[1:]:
+            %heck=heck+","+ str(x[1])
+            %end     
+                {{heck}}
+            %print(heck)
+        </p>
+        
+        <script type="text/javascript">
+            'use strict'
+            function isci() {
+                let znamke = document.getElementById('znamka').value;
+                let seznam_znamk = document.getElementById('seznam_znamk').innerHTML;
+                let seznam_heck = (seznam_znamk.trim()).split(",");
+                console.log(seznam_heck)
+                var a=0
+                for (let i = 0, len = seznam_heck.length; i < len; i++) {
+                    if (znamke == seznam_heck[i]) {
+                        var a=1
+                        console.log(a)
+                        for (let j = 0, len = seznam_heck.length; j < len; j++) {
+                            if (seznam_heck[i] !=seznam_heck[j] ) {
+                                document.getElementById(`test${seznam_heck[j]}`).style.display = "none";
+                                console.log(`model${seznam_heck[j]}`)
+                            }
+                            else{
+                                document.getElementById(`test${seznam_heck[j]}`).style.display = "block";
+                            }
+                        }
+                    }
+                }
+                console.log(a)
+                if(a != 1){
+                    for (let j = 0, len = seznam_heck.length; j < len; j++) {
+                    document.getElementById(`model${seznam_heck[j]}`).style.display = "none";
+                    }
+                }
+            }
+        </script>
+        <input class="form-control mb-5 mt-3 btn btn-danger" value = "Izbriši model" type="submit"/>
+    </form>
+
+</div>

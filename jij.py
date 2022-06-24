@@ -370,6 +370,48 @@ def dodaj_administratorja():
     baza.commit()
     redirect(url("izbira_administrator"))
 
+@get("/brisanje_modela")
+def brisanje_modela():
+    cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
+    if cookie is None:
+        redirect(url(""))
+
+    cur.execute("SELECT id , ime_znamke FROM znamka")
+    a=cur.fetchall()
+    cur.execute("SELECT * FROM modeli")
+    seznam_modelov=cur.fetchall()
+    return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a)
+
+@post("/brisanje_modela")
+def brisanje_modela():
+    znamka=request.forms.get("znamka")
+    model=request.forms.get("model{}".format(znamka))
+    nov_model=request.forms.get("novmodel{}".format(znamka))
+
+    cur.execute("SELECT id , ime_znamke FROM znamka")
+    a=cur.fetchall()
+    cur.execute("SELECT * FROM modeli")
+    seznam_modelov=cur.fetchall()
+
+    cur.execute("SELECT id FROM znamka WHERE ime_znamke=%s",(znamka,))
+    b=cur.fetchall()
+    cur.execute("SELECT model FROM modeli WHERE id_znamke=%s",b)
+    c=cur.fetchall()
+    print(b)
+    print(model)
+    if len(c)==1 and nov_model=="":
+        return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a,napaka="Prosimo izpolnite vsa polja1")
+    if model=="": 
+        return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a,napaka="Prosimo izpolnite vsa polja")
+    if len(c)==1 and nov_model!="":
+        cur.execute("INSERT INTO modeli VALUES(%s, %s)",
+            (b[0],nov_model))
+        baza.commit()
+    
+    cur.execute("DELETE FROM modeli WHERE model = %s",(model,))
+    baza.commit()
+    redirect(url("izbira_administrator"))
+
 def preveri_uporab_ime(ime):
     cur.execute("SELECT uporabnisko_ime FROM oseba")
     a=cur.fetchall()
