@@ -27,14 +27,14 @@ def prijava():
     a=cur.fetchall()
     response.set_cookie("id_uporabnika",(str(a[0][0]),str(a[0][1])),secret=skrivnost)
     if a[0][1]==1:
-        redirect(url("/izbira_administrator"))
+        redirect(url("izbira_administrator"))
     else:
-        redirect(url("/izbira"))
+        redirect(url("izbira"))
 
 @get('/odjava')
 def odjava():
     response.delete_cookie('uporabnisko_ime')
-    redirect(url('/'))
+    redirect(url(''))
 
 @get("/registracija")
 def registracija():
@@ -79,21 +79,21 @@ def registracija():
     a=cur.fetchall()
     response.set_cookie("id_uporabnika",(str(a[0][0]),str(a[0][1])),secret=skrivnost)
     baza.commit()
-    redirect(url("/izbira"))
+    redirect(url("izbira"))
 
 
 @get("/izbira")
 def izbira():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url("/"))
+        redirect(url(""))
     return template("izbira.html")
 
 @get("/izbira_administrator")
 def izbira_administrator():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url("/"))
+        redirect(url(""))
     return template("izbira_administrator.html")
 
 @get("/filter")
@@ -107,7 +107,7 @@ def filter():
 
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url("/"))
+        redirect(url(""))
     uporabnik=int(cookie[1])
 
     return template("filter.html",znamkeid=a,seznam_modelov=seznam_modelov1,uporabnik=uporabnik)
@@ -123,7 +123,7 @@ def rezultati():
 
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url("/"))
+        redirect(url(""))
 
     id_uporab=cookie[0]
     uporabnik=int(cookie[1])
@@ -226,7 +226,7 @@ def objava():
 
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url("/"))
+        redirect(url(""))
     uporabnik=int(cookie[1])
 
     return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1, uporabnik=uporabnik)
@@ -255,7 +255,7 @@ def objava():
 
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url("/"))
+        redirect(url(""))
 
     uporabnik=int(cookie[1])
             
@@ -273,16 +273,16 @@ def objava():
     baza.commit()
 
     if uporabnik==1:
-        redirect(url("/izbira_administrator"))
+        redirect(url("izbira_administrator"))
     if uporabnik==0:
-        redirect(url("/izbira"))
+        redirect(url("izbira"))
 
 @get("/dodaj_znamko")
 def dodaj_znamko():
     cur.execute("SELECT id,ime_serviserja FROM serviser")
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url("/"))
+        redirect(url(""))
     a=cur.fetchall()
     return template("dodaj_znamko.html",podatki_serviserja=a)
 
@@ -322,13 +322,13 @@ def dodaj_znamko():
     cur.execute("INSERT INTO modeli VALUES(%s, %s)",
         (id_znamka[0][0],model))
     baza.commit()
-    redirect(url("/izbira_administrator"))
+    redirect(url("izbira_administrator"))
 
 @get("/dodaj_model")
 def dodaj_model():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url("/"))
+        redirect(url(""))
 
     cur.execute("SELECT id , ime_znamke FROM znamka")
     a=cur.fetchall()
@@ -351,13 +351,13 @@ def dodaj_model():
     cur.execute("INSERT INTO modeli VALUES(%s, %s)",
         (znamka,dodan_model))
     baza.commit()
-    redirect(url("/izbira_administrator"))
+    redirect(url("izbira_administrator"))
 
 @get("/dodaj_administratorja")
 def dodaj_administratorja():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url("/"))
+        redirect(url(""))
     
     cur.execute("SELECT uporabnisko_ime FROM oseba WHERE administrator=0")
     a=cur.fetchall()
@@ -368,7 +368,7 @@ def dodaj_administratorja():
     oseba=request.forms.get("oseba")
     cur.execute("UPDATE oseba SET administrator = 1 WHERE uporabnisko_ime = %s",(oseba,))
     baza.commit()
-    redirect(url("/izbira_administrator"))
+    redirect(url("izbira_administrator"))
 
 def preveri_uporab_ime(ime):
     cur.execute("SELECT uporabnisko_ime FROM oseba")
