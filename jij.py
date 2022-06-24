@@ -34,7 +34,7 @@ def prijava():
 @get('/odjava')
 def odjava():
     response.delete_cookie('uporabnisko_ime')
-    redirect(url(''))
+    redirect(url('/'))
 
 @get("/registracija")
 def registracija():
@@ -86,14 +86,14 @@ def registracija():
 def izbira():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url(""))
+        redirect(url("/"))
     return template("izbira.html")
 
 @get("/izbira_administrator")
 def izbira_administrator():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url(""))
+        redirect(url("/"))
     return template("izbira_administrator.html")
 
 @get("/filter")
@@ -107,7 +107,7 @@ def filter():
 
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url(""))
+        redirect(url("/"))
     uporabnik=int(cookie[1])
 
     return template("filter.html",znamkeid=a,seznam_modelov=seznam_modelov1,uporabnik=uporabnik)
@@ -123,7 +123,7 @@ def rezultati():
 
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url(""))
+        redirect(url("/"))
 
     id_uporab=cookie[0]
     uporabnik=int(cookie[1])
@@ -226,7 +226,7 @@ def objava():
 
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url(""))
+        redirect(url("/"))
     uporabnik=int(cookie[1])
 
     return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1, uporabnik=uporabnik)
@@ -255,7 +255,7 @@ def objava():
 
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url(""))
+        redirect(url("/"))
 
     uporabnik=int(cookie[1])
             
@@ -282,7 +282,7 @@ def dodaj_znamko():
     cur.execute("SELECT id,ime_serviserja FROM serviser")
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url(""))
+        redirect(url("/"))
     a=cur.fetchall()
     return template("dodaj_znamko.html",podatki_serviserja=a)
 
@@ -328,7 +328,7 @@ def dodaj_znamko():
 def dodaj_model():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url(""))
+        redirect(url("/"))
 
     cur.execute("SELECT id , ime_znamke FROM znamka")
     a=cur.fetchall()
@@ -357,7 +357,7 @@ def dodaj_model():
 def dodaj_administratorja():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url(""))
+        redirect(url("/"))
     
     cur.execute("SELECT uporabnisko_ime FROM oseba WHERE administrator=0")
     a=cur.fetchall()
@@ -374,7 +374,7 @@ def dodaj_administratorja():
 def brisanje_modela():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
-        redirect(url(""))
+        redirect(url("/"))
 
     cur.execute("SELECT id , ime_znamke FROM znamka")
     a=cur.fetchall()
