@@ -6,3 +6,6 @@ Repozitorij je namenjen projektni nalogi pri predmetu Osnove podatkovnih baz. Sp
 ## ER diagram
 
  Tukaj si lahko ogledate ER diagram.![ER](https://user-images.githubusercontent.com/64776159/161840894-bc2042ac-6cbf-4679-acf1-e2de95af1069.jpeg)
+
+ ## ELink do binderja
+[![bottle.py](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ian-spiller/JIJ-prodaja-avtov/main?urlpath=proxy/8080/)
