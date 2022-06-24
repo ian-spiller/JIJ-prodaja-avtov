@@ -1,21 +1,35 @@
-<html>
-<head>
-</head>
-<body>
-    <form action="/filter" method="get">
-        <input value = "Iskanje" type="submit" />
+% setdefault("napaka","")
+% rebase("base.html",naslov="",uporabnik=1,napaka="")
+
+<div class="container w-50">    
+    <form action="{{url('filter')}}" method="get">
+        <div class="text-center mt-5">
+        <input class="form-control btn btn-danger" value = "Iskanje" type="submit" />
+        </div>
     </form>
-    <form action="/objava" method="get">
-        <input value = "Objava oglasa" type="submit" />
+
+    <form action="{{url('objava')}}" method="get">
+        <div class="text-center mt-3">
+        <input class="form-control btn btn-danger" value = "Objava oglasa" type="submit" />
+        </div>
     </form>
-    <form action="/dodaj_znamko" method="get">
-        <input value = "Dodaj znamko" type="submit" />
+
+    <form action="{{url('dodaj_znamko')}}" method="get">
+        <div class="text-center mt-3">
+        <input class="form-control btn btn-danger" value = "Dodaj znamko" type="submit" />
+        </div>
     </form>
-    <form action="/dodaj_model" method="get">
-        <input value = "Dodaj model" type="submit" />
+
+    <form action="{{url('dodaj_model')}}" method="get">
+        <div class="text-center mt-3">
+        <input class="form-control btn btn-danger" value = "Dodaj model" type="submit" />
+        </div>
     </form>
-    <form action="/dodaj_administratorja" method="get">
-        <input value = "Dodaj administratorja" type="submit" />
+
+    <form action="{{url('dodaj_administratorja')}}" method="get">
+        <div class="text-center mb-5 mt-3">
+        <input class="form-control btn btn-danger" value = "Dodaj administratorja" type="submit" />
+        </div>
     </form>
-</body>
-</html> 
+<div>
+

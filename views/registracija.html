@@ -1,18 +1,31 @@
-<html>
-<head>
-</head>
-<body>
-    <form action="/registracija" method="post">
-        <span>Ime:</span> <input name="ime" type="text" />
-        <span> Uporabniško ime: </span> <input name="uporabnisko_ime" type="text" />
-        <span>Geslo:</span> <input name="geslo" type="password" />
-        <span>Telefon:</span> <input name="tel" type="text" />
-        <select name="zav" id="zav">    
-            %for x in a:        
-                <option value="{{x[0]}}">{{x[1]}}</option>
-            %end
-        </select>
-        <input value = "Registracija" type="submit" />
+%setdefault("napaka","")
+%rebase("base.html",naslov="Registracija",uporabnik=2,napaka=napaka)
+<div class="container w-25"></div>
+    <form action="{{url('registracija')}}" method="post">
+        <div class="text-center mt-3">
+            <label for="ime" class="form-label">Ime:</label>
+            <input class="form-control" id="ime" name="ime" type="text" />
+        </div>
+        <div class="text-center mt-3">
+            <label for="uporabnisko_ime" class="form-label">Uporabniško ime:</label>
+            <input class="form-control" id="uporabnisko_ime" name="uporabnisko_ime" type="text" />
+        </div>
+        <div class="text-center mt-3">
+            <label for="geslo" class="form-label">Geslo:</label>
+            <input class="form-control" id="geslo" name="geslo" type="password" />
+        </div>
+        <div class="text-center mt-3">
+            <label for="tel" class="form-label">Telefon:</label>
+            <input class="form-control" id="tel" name="tel" type="text" />
+        </div>
+        <div class="text-center mt-3 mb-3">
+            <label for="zav">Zavarovlnica:</label>
+            <select class="form-select" name="zav" id="zav">    
+                %for x in a:        
+                    <option value="{{x[0]}}">{{x[1]}}</option>
+                %end
+            </select>
+        </div>
+        <input class="form-control mb-5 mt-3 btn btn-danger" value = "Registracija" type="submit" />
     </form>
-</body>
-</html> 
+</div>

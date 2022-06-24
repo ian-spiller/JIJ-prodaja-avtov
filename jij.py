@@ -1,5 +1,5 @@
 from pickle import FALSE, TRUE
-from bottle import *
+from bottleext import *
 import psycopg2
 
 
@@ -10,31 +10,31 @@ cur=baza.cursor()
 
 skrivnost="asdfghjkl12345"
 
-@get("/prijava")
-def prijavno_okno():
+@get("/")
+def prijavno():
     return template("prijava.html")
 
-@post("/prijava")
+@post("/")
 def prijava():
     uporabnisko_ime=request.forms.get("uporabnisko_ime")
     geslo=request.forms.get("geslo")
-    if uporabnisko_ime is None or geslo is None:
-        return """<p> Prosimo izplonite vsa polja</p>"""
+    print(geslo)
+    if uporabnisko_ime=="" or geslo=="":
+        return template("prijava.html",napaka="Prosimo izpolnite vsa polja")
     if not preveri(uporabnisko_ime,geslo):
-        """<p> Napačni podatki za prijavo. Poskusite <a href="/prijava">še enkrat</a> ali pa se <a href="/registracija">registrirajte</a> </p>"""
+        return template("prijava.html",napaka="Vaše uporabniško ime ali geslo ni pravilno")
     cur.execute("SELECT id,administrator FROM oseba WHERE uporabnisko_ime=%s",(uporabnisko_ime,))
     a=cur.fetchall()
-    print(a[0][0])
-    response.set_cookie("id_uporabnika",str(a[0][0]),secret=skrivnost)
+    response.set_cookie("id_uporabnika",(str(a[0][0]),str(a[0][1])),secret=skrivnost)
     if a[0][1]==1:
-        redirect("/izbira_administrator")
+        redirect(url("/izbira_administrator"))
     else:
-        redirect("/izbira")
+        redirect(url("/izbira"))
 
 @get('/odjava')
-def odjava_get():
+def odjava():
     response.delete_cookie('uporabnisko_ime')
-    redirect('/prijava')
+    redirect(url('/'))
 
 @get("/registracija")
 def registracija():
@@ -43,27 +43,57 @@ def registracija():
     return template("registracija.html",a=a)
 
 @post("/registracija")
-def reg():
+def registracija():
     ime=request.forms.get("ime")
+    ime=ime.encode("ISO-8859-1")
+    ime=ime.decode("utf-8")
     uporabnisko_ime=request.forms.get("uporabnisko_ime")
+    uporabnisko_ime=uporabnisko_ime.encode("ISO-8859-1")
+    uporabnisko_ime=uporabnisko_ime.decode("utf-8")
     geslo=request.forms.get("geslo")
+    geslo=geslo.encode("ISO-8859-1")
+    geslo=geslo.decode("utf-8")
     tel=request.forms.get("tel")
     id_zav=request.forms.get("zav")
-    if preveri_uporab_ime(uporabnisko_ime)==FALSE:
-        return """<p>Uporabniško ime je zasedeno</p>"""
-    cur.execute("INSERT INTO oseba VALUES(%s, %s, %s, %s, %s)",(ime,id_zav,tel,geslo,uporabnisko_ime))
-    cur.execute("SELECT id FROM oseba WHERE uporabnisko_ime=%s",(uporabnisko_ime,))
+    cur.execute("SELECT id , ime_zavarovalnice FROM zavarovalnica")
     a=cur.fetchall()
-    response.set_cookie("id_uporabnika",a,secret=skrivnost)
+    if ime=="" or uporabnisko_ime=="" or geslo=="" or tel=="" or id_zav=="": 
+        return template("registracija.html", napaka="Prosimo izpolnite vsa polja",a=a)
+    if preveri_uporab_ime(uporabnisko_ime)==FALSE:
+        return template("registracija.html", napaka="To uporabniško ime je že zasedeno",a=a)
+    if "Ž" in uporabnisko_ime or "ž" in uporabnisko_ime or "Š" in uporabnisko_ime or "š" in uporabnisko_ime or "Č" in uporabnisko_ime or "č" in uporabnisko_ime:
+        return template("registracija.html", napaka="Uporabniško ime nesme vključevati šumnikov",a=a)
+    if " " in uporabnisko_ime:
+        return template("registracija.html", napaka="Uporabniško ime nesme vključevati presledkov",a=a)
+    if " " in geslo:
+        return template("registracija.html", napaka="Geslo nesme vključevati presledkov",a=a)
+    if len(str(geslo))<5:
+        return template("registracija.html", napaka="Geslo mora vsebovati vsaj pet znakov",a=a)
+    if len(str(tel))<9 or len(str(tel))>9:
+        return template("registracija.html", napaka="Prosimo vnesite resnično telefonsko številko",a=a)
+    cur.execute("""INSERT INTO oseba (ime,id_zavarovalnice,telefon,geslo,uporabnisko_ime,administrator) 
+        VALUES(%(ime)s, %(zav)s, %(tel)s, %(geslo)s, %(uporabnisko_ime)s,%(administrator)s)""", 
+        {"ime":ime,"zav":id_zav,"tel":int(tel),"geslo":geslo,"uporabnisko_ime":uporabnisko_ime,"administrator":0})
+
+    cur.execute("SELECT id,administrator FROM oseba WHERE uporabnisko_ime=%s",(uporabnisko_ime,))
+    a=cur.fetchall()
+    response.set_cookie("id_uporabnika",(str(a[0][0]),str(a[0][1])),secret=skrivnost)
     baza.commit()
-    redirect("/izbira")
+    redirect(url("/izbira"))
+
 
 @get("/izbira")
 def izbira():
+    cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
+    if cookie is None:
+        redirect(url("/"))
     return template("izbira.html")
 
 @get("/izbira_administrator")
 def izbira_administrator():
+    cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
+    if cookie is None:
+        redirect(url("/"))
     return template("izbira_administrator.html")
 
 @get("/filter")
@@ -74,8 +104,13 @@ def filter():
     cur.execute("SELECT * FROM modeli")
     seznam_modelov=cur.fetchall()
     seznam_modelov1=popravi_seznam(seznam_modelov)
-    seznam_modelov1=[(1,"Vse")]+seznam_modelov1
-    return template("filter.html",znamkeid=a,seznam_modelov=seznam_modelov1)
+
+    cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
+    if cookie is None:
+        redirect(url("/"))
+    uporabnik=int(cookie[1])
+
+    return template("filter.html",znamkeid=a,seznam_modelov=seznam_modelov1,uporabnik=uporabnik)
 
 @get("/rezultati")
 def rezultati():
@@ -302,23 +337,27 @@ def dodaj_administratorja():
     redirect("/izbira_administrator")
 
 def preveri_uporab_ime(ime):
-    cur.execute("SELECT ime FROM oseba")
+    cur.execute("SELECT uporabnisko_ime FROM oseba")
     a=cur.fetchall()
     for x in a:
         if x[0]==ime:
             return FALSE
 
 def preveri(ime,geslo):
-    cur.execute("SELECT ime , geslo FROM oseba")
+    cur.execute("SELECT uporabnisko_ime , geslo FROM oseba")
     a=cur.fetchall()
     for x in a:
         if x[0]==ime and x[1]==geslo:
             return TRUE
 
 def popravi_seznam(seznam):
-    popravljen_seznam=[seznam[0]]
-    for x in range(1,len(seznam)):
-        if (seznam[x])[0] is not (seznam[x-1])[0]:
+    popravljen_seznam=[]
+    for x in range(0,len(seznam)):
+        a=0
+        for y in range(0,x):
+            if (seznam[x])[0] == (seznam[y])[0]:
+                a=a+1
+        if a==0:
             popravljen_seznam=popravljen_seznam+[(((seznam[x])[0]),"Vse")] + [seznam[x]]
         else:
             popravljen_seznam=popravljen_seznam+[seznam[x]]

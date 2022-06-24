@@ -1,12 +1,17 @@
-<html>
-<head>
-</head>
-<body>
-    <form action="/filter" method="get">
-        <input value = "Iskanje" type="submit" />
+% setdefault("napaka","")
+%rebase("base.html",naslov="Izberite",uporabnik=0,napaka="")
+
+<div class="container w-50">    
+    <form action="{{url('filter')}}" method="get">
+        <div class="text-center mt-5">
+        <input class="form-control btn btn-danger" value = "Iskanje" type="submit" />
+        </div>
     </form>
-    <form action="/objava" method="get">
-        <input value = "Objava oglasa" type="submit" />
+
+    <form action="{{url('objava')}}" method="get">
+        <div class="text-center mt-4 mb-5">
+        <input class="form-control btn btn-danger" value = "Objava oglasa" type="submit" />
+        </div>
     </form>
-</body>
-</html> 
+</div>
+

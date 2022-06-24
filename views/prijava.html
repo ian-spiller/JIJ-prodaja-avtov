@@ -1,12 +1,21 @@
-<html>
-<head>
-</head>
-<body>
-    <form action="/prijava" method="post">
-        <span> Uporabniško ime: </span> <input name="uporabnisko_ime" type="text" />
-        <span>Geslo:</span> <input name="geslo" type="password" />
-        <input value = "Prijava" type="submit" />
+%setdefault("napaka","")
+%rebase("base.html",naslov="Prijava",uporabnik=2,napaka=napaka)
+
+<div class="container w-25">    
+    <form action="{{url('prijava')}}" method="post">
+        <div class="text-center" style="margin-top: 30px">
+        <label for="uporabnisko_ime" class="form-label">Uporabniško ime:</label>
+        <input class="form-control" id="uporabnisko_ime" name="uporabnisko_ime" type="text" />
+        </div>
+        <div class="text-center " style="margin-top: 10px">
+        <label for="geslo" class="form-label">Geslo:</label>
+        <input class="form-control" id="geslo" name="geslo" type="password" />
+        </div>
+        <div class="text-center" style="margin-top: 40px">
+        <input class="form-control btn btn-danger" value = "Prijava" type="submit" />
+        </div>
     </form>
-    <a href="/registracija">Registracija</a>
-</body>
-</html> 
+    <div class="text-center pb-3 pt-3">  
+        <a href="/registracija">Registracija</a>
+    </div>
+</div>
