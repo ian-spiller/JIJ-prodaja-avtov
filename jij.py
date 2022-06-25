@@ -93,9 +93,9 @@ def registracija():
         response.set_cookie("id_uporabnika", id_uporabnika, secret=skrivnost)
         response.set_cookie("administrator", 0, secret=skrivnost)
         baza.commit()
-    except:
+    except psycopg2.DatabaseError as ex:
         baza.rollback()
-        return template("registracija.html", a=a, napaka="Prišlo je do napake",
+        return template("registracija.html", a=a, napaka=f"Prišlo je do napake: {ex}",
         ime=ime, zav=id_zav, tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
 
     redirect(url("izbira"))
@@ -290,9 +290,9 @@ def objava():
         cur.execute("INSERT INTO oglas (id_znamke,cena,stanje,oblika,kilometri,gorivo,letnik,model,id_osebe) VALUES(%s, %s, %s, %s, %s,%s,%s,%s,%s)",
         (znamka_id,cena,stanje,oblika,kilometri,gorivo,int(letnik),model,cookie))
         baza.commit()
-    except:
+    except psycopg2.DatabaseError as ex:
         baza.rollback()
-        return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1,napaka="Prišlo je do napake", uporabnik=uporabnik,znamka=znamka,
+        return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1,napaka=f"Prišlo je do napake: {ex}", uporabnik=uporabnik,znamka=znamka,
         cena=cena,stanje=stanje,oblika=oblika,kilometri=kilometri,letnik=letnik,gorivo=gorivo)
 
     if uporabnik==1:
@@ -344,9 +344,9 @@ def dodaj_znamko():
         cur.execute("INSERT INTO znamka (ime_znamke,id_serviserja) VALUES(%s, %s)",
         (dodana_znamka,id_serviserja))
         baza.commit()
-    except:
+    except psycopg2.DatabaseError as ex:
         baza.rollback()
-        return template("dodaj_znamko.html",podatki_serviserja=a, napaka="Prišlo je do napake",
+        return template("dodaj_znamko.html",podatki_serviserja=a, napaka=f"Prišlo je do napake: {ex}",
         dodana_znamka=dodana_znamka, model=model, id_serviserja=id_serviserja)
 
     cur.execute("SELECT id FROM znamka WHERE ime_znamke=%s",(dodana_znamka,))
@@ -356,9 +356,9 @@ def dodaj_znamko():
         cur.execute("INSERT INTO modeli VALUES(%s, %s)",
         (id_znamka[0][0],model))
         baza.commit()
-    except:
+    except psycopg2.DatabaseError as ex:
         baza.rollback()
-        return template("dodaj_znamko.html",podatki_serviserja=a, napaka="Prišlo je do napake",
+        return template("dodaj_znamko.html",podatki_serviserja=a, napaka=f"Prišlo je do napake: {ex}",
         dodana_znamka=dodana_znamka, model=model, id_serviserja=id_serviserja)
     
     redirect(url("izbira_administrator"))
@@ -393,9 +393,9 @@ def dodaj_model():
         cur.execute("INSERT INTO modeli VALUES(%s, %s)",
         (znamka,dodan_model))
         baza.commit()
-    except:
+    except psycopg2.DatabaseError as ex:
         baza.rollback()
-        return template("dodaj_model.html",a=a, napaka="Prišlo je do napake",
+        return template("dodaj_model.html",a=a, napaka=f"Prišlo je do napake: {ex}",
         znamka=znamka, dodan_model=dodan_model)
     redirect(url("izbira_administrator"))
 
@@ -417,9 +417,9 @@ def dodaj_administratorja():
     try:
         cur.execute("UPDATE oseba SET administrator = 1 WHERE uporabnisko_ime = %s",(oseba,))
         baza.commit()
-    except:
+    except psycopg2.DatabaseError as ex:
         baza.rollback()
-        return template("dodaj_administratorja.html",seznam_oseb=a, napaka="Prišlo je do napake",
+        return template("dodaj_administratorja.html",seznam_oseb=a, napaka=f"Prišlo je do napake: {ex}",
         oseba=oseba)
         
     redirect(url("izbira_administrator"))
@@ -462,18 +462,18 @@ def brisanje_modela():
             cur.execute("INSERT INTO modeli VALUES(%s, %s)",
             (b[0],nov_model))
             baza.commit()
-        except:
+        except psycopg2.DatabaseError as ex:
             baza.rollback()
-            return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a, napaka="Prišlo je do napake",
+            return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a, napaka=f"Prišlo je do napake: {ex}",
             znamka=znamka)
     
     try:
         cur.execute("DELETE FROM modeli WHERE model = %s",(model,))
         cur.execute("DELETE FROM oglas WHERE model = %s",(model,))
         baza.commit()
-    except:
+    except psycopg2.DatabaseError as ex:
         baza.rollback()
-        return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a, napaka="Prišlo je do napake",
+        return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a, napaka=f"Prišlo je do napake: {ex}",
         znamka=znamka)
     redirect(url("izbira_administrator"))
 
