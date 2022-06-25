@@ -146,7 +146,7 @@ def rezultati():
 
     id_uporab=cookie
     uporabnik=int(request.get_cookie("administrator",secret=skrivnost))
-    cur.execute("SELECT id_zavarovalnice FROM oseba WHERE id=%s",((id_uporab[0])[0],))
+    cur.execute("SELECT id_zavarovalnice FROM oseba WHERE id=%s",(id_uporab,))
     id_zav=cur.fetchall()
     id_zav=id_zav[0]
 
