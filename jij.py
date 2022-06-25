@@ -288,7 +288,7 @@ def objava():
         znamka=znamka,cena=cena,stanje=stanje,oblika=oblika,kilometri=kilometri,letnik=letnik,gorivo=gorivo)
     try:
         cur.execute("INSERT INTO oglas (id_znamke,cena,stanje,oblika,kilometri,gorivo,letnik,model,id_osebe) VALUES(%s, %s, %s, %s, %s,%s,%s,%s,%s)",
-        (znamka_id,cena,stanje,oblika,kilometri,gorivo,int(letnik),model,(id_uporab[0])[0]))
+        (znamka_id,cena,stanje,oblika,kilometri,gorivo,int(letnik),model,cookie))
         baza.commit()
     except:
         baza.rollback()
