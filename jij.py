@@ -95,7 +95,7 @@ def registracija():
         baza.commit()
     except:
         baza.rollback()
-        return template("registracija.html", a=a, napaka=f"Prišlo je do napake: {ex}",
+        return template("registracija.html", a=a, napaka="Prišlo je do napake",
         ime=ime, zav=id_zav, tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
 
     redirect(url("izbira"))
