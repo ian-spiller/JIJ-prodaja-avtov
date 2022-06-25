@@ -16,7 +16,7 @@ skrivnost="asdfghjkl12345"
 
 @get("/")
 def prijavno():
-    return template("prijava.html")
+    return template("prijava.html",uporabnisko_ime="",geslo="")
 
 @post("/")
 def prijava():
@@ -46,7 +46,7 @@ def odjava():
 def registracija():
     cur.execute("SELECT id , ime_zavarovalnice FROM zavarovalnica")
     a=cur.fetchall()
-    return template("registracija.html",a=a)
+    return template("registracija.html",a=a,ime="",uporabnisko_ime="",geslo="",tel="",zav=1)
 
 @post("/registracija")
 def registracija():
@@ -248,11 +248,11 @@ def objava():
         redirect(url('prijavno'))
     uporabnik=int(request.get_cookie("administrator",secret=skrivnost))
 
-    return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1, uporabnik=uporabnik)
+    return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1, uporabnik=uporabnik,
+        cena=0,kilometri=0,letnik=0)
 
 @post("/objava")
 def objava():
-    id_uporab=request.get_cookie("id_uporabnika",secret=skrivnost)
     znamka=request.forms.znamka
     cena=request.forms.cena
     stanje=request.forms.stanje
@@ -307,7 +307,7 @@ def dodaj_znamko():
     if cookie is None:
         redirect(url('prijavno'))
     a=cur.fetchall()
-    return template("dodaj_znamko.html",podatki_serviserja=a)
+    return template("dodaj_znamko.html",podatki_serviserja=a,dodana_znamka="", model="")
 
 @post("/dodaj_znamko")
 def dodaj_znamko():
@@ -371,7 +371,7 @@ def dodaj_model():
 
     cur.execute("SELECT id , ime_znamke FROM znamka")
     a=cur.fetchall()
-    return template("dodaj_model.html",seznam_znamk=a)
+    return template("dodaj_model.html",seznam_znamk=a,dodan_model="")
 
 @post("/dodaj_model")
 def dodaj_model():

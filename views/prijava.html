@@ -5,11 +5,11 @@
     <form action="{{url('prijava')}}" method="post">
         <div class="text-center" style="margin-top: 30px">
         <label for="uporabnisko_ime" class="form-label">Uporabniško ime:</label>
-        <input class="form-control" id="uporabnisko_ime" name="uporabnisko_ime" type="text" />
+        <input class="form-control" id="uporabnisko_ime" name="uporabnisko_ime" value="{{uporabnisko_ime}}" type="text" />
         </div>
         <div class="text-center " style="margin-top: 10px">
         <label for="geslo" class="form-label">Geslo:</label>
-        <input class="form-control" id="geslo" name="geslo" type="password" />
+        <input class="form-control" id="geslo" name="geslo" type="password" value="{{geslo}}" />
         </div>
         <div class="text-center" style="margin-top: 40px">
         <input class="form-control btn btn-danger" value = "Prijava" type="submit" />
