@@ -2,10 +2,14 @@ from pickle import FALSE, TRUE
 from bottleext import *
 import psycopg2
 
+import os
+SERVER_PORT = os.environ.get('BOTTLE_PORT', 8080)
+RELOADER = os.environ.get('BOTTLE_RELOADER', True)
+DB_PORT = os.environ.get('POSTGRES_PORT', 5432)
+
 
 from conf_baza import *
-conn_string = "host='{0}' dbname='{1}' user='{2}' password='{3}'".format(host, dbname ,user,password) 
-baza = psycopg2.connect(conn_string)
+baza = psycopg2.connect(database=dbname, host=host, user=user, password=password, port=DB_PORT)
 cur=baza.cursor()
 
 skrivnost="asdfghjkl12345"
@@ -453,4 +457,4 @@ def popravi_seznam1(seznam):
             popravljen_seznam=popravljen_seznam+[seznam[x]]
     return popravljen_seznam
 
-run(host="localhost", port=8080, reloader=True)
+run(host="localhost", port=SERVER_PORT, reloader=RELOADER)
