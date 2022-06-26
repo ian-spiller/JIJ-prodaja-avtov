@@ -428,7 +428,7 @@ def brisanje_modela():
     a=cur.fetchall()
     cur.execute("SELECT * FROM modeli")
     seznam_modelov=cur.fetchall()
-    return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a)
+    return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a,znamka="",model="")
 
 @post("/brisanje_modela")
 def brisanje_modela():
@@ -448,9 +448,9 @@ def brisanje_modela():
     print(b)
     print(model)
     if len(c)==1 and nov_model=="":
-        return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a,napaka="Prosimo izpolnite vsa polja",znamka=znamka)
+        return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a,napaka="Prosimo izpolnite vsa polja",znamka=znamka,model=model)
     if model=="": 
-        return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a,napaka="Prosimo izpolnite vsa polja",znamka=znamka)
+        return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a,napaka="Prosimo izpolnite vsa polja",znamka=znamka,model=model)
     if len(c)==1 and nov_model!="":
         try:
             cur.execute("INSERT INTO modeli VALUES(%s, %s)",
@@ -459,7 +459,7 @@ def brisanje_modela():
         except psycopg2.DatabaseError as ex:
             baza.rollback()
             return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a, napaka=f"Prišlo je do napake: {ex}",
-            znamka=znamka)
+            znamka=znamka,model=model)
     
     try:
         cur.execute("DELETE FROM modeli WHERE model = %s",(model,))
@@ -468,7 +468,7 @@ def brisanje_modela():
     except psycopg2.DatabaseError as ex:
         baza.rollback()
         return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a, napaka=f"Prišlo je do napake: {ex}",
-        znamka=znamka)
+        znamka=znamka,model=model)
     redirect(url("izbira_administrator"))
 
 def preveri_uporab_ime(ime):
