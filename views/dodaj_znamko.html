@@ -17,7 +17,7 @@
             <label for="id_serviserja">Serviser:</label>
             <select class="form-select" name="id_serviserja" id="id_serviserja">    
             %for x in podatki_serviserja:        
-                <option value="{{x[0]}}">{{x[1]}}</option>
+                <option value="{{x[0]}}" {{'selected' if x[0]== id_serviserja else '' }}>{{x[1]}}</option>
             %end
             </select>
         </div>

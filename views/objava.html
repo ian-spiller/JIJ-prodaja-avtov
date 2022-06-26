@@ -18,24 +18,56 @@
                         %if x[1]=="Skoda":
                             <option value="Skoda">Škoda</option>
                         %else:          
-                            <option value="{{x[1]}}">{{x[1]}}</option>
+                            <option value="{{x[1]}}" {{'selected' if x[1]== znamka else '' }}>{{x[1]}}</option>
                         %end
                     %end
                 </select>
             </div>
 
-            %for x in znamkeid[1:]:
-                <div class="text-center mt-3" id="test{{x[1]}}" style="display: none">
-                <label for="model{{x[1]}}">Model:</label>
-                <select class="form-select" name="model{{x[1]}}" id="model{{x[1]}}"> 
-                %for y in seznam_modelov:
-                    %if y[0]==x[0]:      
-                        <option value="{{y[1]}}">{{y[1]}}</option>
+            %if model=="":
+                %for x in znamkeid[1:]:
+                    <div class="text-center mt-3" id="test{{x[1]}}" style="display: none">
+                    <label for="model{{x[1]}}">Model:</label>
+                    <select class="form-select" name="model{{x[1]}}" id="model{{x[1]}}"> 
+                    %for y in seznam_modelov:
+                        %if y[0]==x[0]:      
+                            <option value="{{y[1]}}">{{y[1]}}</option>
+                        %end
                     %end
+                    </select>
+                    </div>
                 %end
-                </select>
+            %else:
+                <div class="text-center mt-3" id="test{{znamka}}">
+                    <label for="model{{znamka}}">Model:</label>
+                    <select class="form-select" name="model{{znamka}}" id="model{{znamka}}">
+                    %for z in znamkeid:
+                    %if z[1]==znamka:
+                    %a=z[0]
+                    %end
+                    %end
+                    %for y in seznam_modelov:
+                        %if y[0]==a:      
+                            <option value="{{y[1]}}" {{'selected' if y[1]== model else '' }}>{{y[1]}}</option>
+                        %end
+                    %end
+                    </select>
+                </div>
+                %for x in znamkeid[1:]:
+                %if x[1]!=znamka:
+                <div class="text-center mt-3" id="test{{x[1]}}" style="display: none">
+                    <label for="model{{x[1]}}">Model:</label>
+                    <select class="form-select" name="model{{x[1]}}" id="model{{x[1]}}"> 
+                    %for y in seznam_modelov:
+                        %if y[0]==x[0]:      
+                            <option value="{{y[1]}}" {{'selected' if y[1]== model else '' }}>{{y[1]}}</option>
+                        %end
+                    %end
+                    </select>
                 </div>
                 %end
+                %end        
+            %end
 
             <div class="text-center mt-3">
                 <label for="cena">Cena:</label>
@@ -46,9 +78,9 @@
                 <label for="stanje">Stanje:</label>
                 <select class="form-select" name="stanje" id="stanje">
                         <option value="Vse">Vse</option>
-                        <option value="rabljeno">Rabljeno</option>
-                        <option value="novo">Novo</option>
-                        <option value="testno">Testno</option>
+                        <option value="rabljeno" {{'selected' if stanje =='rabljeno' else '' }}>Rabljeno</option>
+                        <option value="novo" {{'selected' if stanje=='novo' else '' }}>Novo</option>
+                        <option value="testno" {{'selected' if stanje=='testno' else '' }}>Testno</option>
                 </select>
             </div>
     
@@ -56,11 +88,11 @@
                     <label for="oblika">Oblika:</label>
                     <select class="form-select" name="oblika" id="oblika">
                         <option value="Vse">Vse</option>
-                        <option value="SUV">SUV</option>
-                        <option value="limuzina">Limuzina</option>
-                        <option value="karavan">Karavan</option>
-                        <option value="coupe">Coupe</option>
-                        <option value="kabrijolet">Kabrijolet</option>
+                        <option value="SUV" {{'selected' if oblika=="SUV" else '' }}>SUV</option>
+                        <option value="limuzina" {{'selected' if oblika=="limuzina" else '' }}>Limuzina</option>
+                        <option value="karavan" {{'selected' if oblika=="karavan" else '' }}>Karavan</option>
+                        <option value="coupe" {{'selected' if oblika=="coupe" else '' }}>Coupe</option>
+                        <option value="kabrijolet" {{'selected' if oblika=="kabrijolet" else '' }}>Kabrijolet</option>
                     </select>
                 </div>
     
@@ -78,10 +110,10 @@
                     <label for="gorivo">Gorivo:</label>
                     <select class="form-select" name="gorivo" id="gorivo">
                         <option value="Vse">Vse</option>
-                        <option value="bencin">Bencin</option>
-                        <option value="dizel">Dizel</option>
-                        <option value="hibrid">Hibrid</option>
-                        <option value="elektrika">Elektrika</option>
+                        <option value="bencin" {{'selected' if gorivo=="bencin" else '' }}>Bencin</option>
+                        <option value="dizel" {{'selected' if gorivo=="dizel" else '' }}>Dizel</option>
+                        <option value="hibrid" {{'selected' if gorivo=="hibrid" else '' }}>Hibrid</option>
+                        <option value="elektrika" {{'selected' if gorivo=="elektrika" else '' }}>Elektrika</option>
                     </select>
                 </div>
     

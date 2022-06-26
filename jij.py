@@ -277,7 +277,7 @@ def objava():
     seznam_modelov=cur.fetchall()
     seznam_modelov1=popravi_seznam1(seznam_modelov)
     seznam_modelov1=[(1,"Izberite")]+seznam_modelov1    
-    if model=="Izberite" or znamka=="Izberite" or cena==0 or stanje=="Vse" or oblika=="Vse" or gorivo=="Vse" or letnik==0:
+    if model=="Izberite" or znamka=="Izberite" or float(cena)==0 or stanje=="Vse" or oblika=="Vse" or gorivo=="Vse" or int(letnik)==0:
         return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1,napaka="Prosimo izpolnite vsa polja",uporabnik=uporabnik,model=model,
         znamka=znamka,cena=cena,stanje=stanje,oblika=oblika,kilometri=kilometri,letnik=letnik,gorivo=gorivo)
     try:
@@ -301,7 +301,7 @@ def dodaj_znamko():
     if cookie is None:
         redirect(url('prijavno'))
     a=cur.fetchall()
-    return template("dodaj_znamko.html",podatki_serviserja=a,dodana_znamka="", model="")
+    return template("dodaj_znamko.html",podatki_serviserja=a,dodana_znamka="", model="",id_serviserja=None)
 
 @post("/dodaj_znamko")
 def dodaj_znamko():
@@ -314,25 +314,25 @@ def dodaj_znamko():
 
     if "Ž" in dodana_znamka or "ž" in dodana_znamka or "Š" in dodana_znamka or "š" in dodana_znamka or "Č" in dodana_znamka or "č" in dodana_znamka:
         return template("dodaj_znamko.html", napaka="Ime znamke nesme vključevati šumnikov",a=a,
-        dodana_znamka=dodana_znamka, model=model, id_serviserja=id_serviserja)
+        dodana_znamka=dodana_znamka, model=model, id_serviserja=int(id_serviserja))
 
     if dodana_znamka=="":
         return template("dodaj_znamko.html",podatki_serviserja=a,napaka="Prosimo izpolnite vsa polja",
-        dodana_znamka=dodana_znamka, model=model, id_serviserja=id_serviserja)
+        dodana_znamka=dodana_znamka, model=model, id_serviserja=int(id_serviserja))
 
     if "Ž" in model or "ž" in model or "Š" in model or "š" in model or "Č" in model or "č" in model:
         return template("dodaj_znamko.html", napaka="Ime modela nesme vključevati šumnikov",a=a,
-        dodana_znamka=dodana_znamka, model=model, id_serviserja=id_serviserja)
+        dodana_znamka=dodana_znamka, model=model, id_serviserja=int(id_serviserja))
 
     if model=="":
         return template("dodaj_znamko.html",podatki_serviserja=a,napaka="Prosimo izpolnite vsa polja",
-        dodana_znamka=dodana_znamka, model=model, id_serviserja=id_serviserja)
+        dodana_znamka=dodana_znamka, model=model, id_serviserja=int(id_serviserja))
 
     cur.execute("SELECT ime_znamke FROM znamka")
     b=cur.fetchall()
     if dodana_znamka in b:
         return template("dodaj_znamko.html",podatki_serviserja=a,napaka="Ta znamka že obstaja",
-        dodana_znamka=dodana_znamka, model=model, id_serviserja=id_serviserja)
+        dodana_znamka=dodana_znamka, model=model, id_serviserja=int(id_serviserja))
 
     try:
         cur.execute("INSERT INTO znamka (ime_znamke,id_serviserja) VALUES(%s, %s)",
@@ -341,7 +341,7 @@ def dodaj_znamko():
     except psycopg2.DatabaseError as ex:
         baza.rollback()
         return template("dodaj_znamko.html",podatki_serviserja=a, napaka=f"Prišlo je do napake: {ex}",
-        dodana_znamka=dodana_znamka, model=model, id_serviserja=id_serviserja)
+        dodana_znamka=dodana_znamka, model=model, id_serviserja=int(id_serviserja))
 
     cur.execute("SELECT id FROM znamka WHERE ime_znamke=%s",(dodana_znamka,))
     id_znamka=cur.fetchall()
@@ -353,7 +353,7 @@ def dodaj_znamko():
     except psycopg2.DatabaseError as ex:
         baza.rollback()
         return template("dodaj_znamko.html",podatki_serviserja=a, napaka=f"Prišlo je do napake: {ex}",
-        dodana_znamka=dodana_znamka, model=model, id_serviserja=id_serviserja)
+        dodana_znamka=dodana_znamka, model=model, id_serviserja=int(id_serviserja))
     
     redirect(url("izbira_administrator"))
 
