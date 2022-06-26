@@ -59,25 +59,25 @@ def registracija():
     a=cur.fetchall()
     if ime=="" or uporabnisko_ime=="" or geslo=="" or tel=="" or id_zav=="": 
         return template("registracija.html", napaka="Prosimo izpolnite vsa polja",a=a,
-        ime=ime, zav=id_zav, tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
+        ime=ime, zav=int(id_zav), tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
     if preveri_uporab_ime(uporabnisko_ime)==FALSE:
         return template("registracija.html", napaka="To uporabniško ime je že zasedeno",a=a,
-        ime=ime, zav=id_zav, tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
+        ime=ime, zav=int(id_zav), tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
     if "Ž" in uporabnisko_ime or "ž" in uporabnisko_ime or "Š" in uporabnisko_ime or "š" in uporabnisko_ime or "Č" in uporabnisko_ime or "č" in uporabnisko_ime:
         return template("registracija.html", napaka="Uporabniško ime nesme vključevati šumnikov",a=a,
-        ime=ime, zav=id_zav, tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
+        ime=ime, zav=int(id_zav), tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
     if " " in uporabnisko_ime:
         return template("registracija.html", napaka="Uporabniško ime nesme vključevati presledkov",a=a,
-        ime=ime, zav=id_zav, tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
+        ime=ime, zav=int(id_zav), tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
     if " " in geslo:
         return template("registracija.html", napaka="Geslo nesme vključevati presledkov",a=a,
-        ime=ime, zav=id_zav, tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
+        ime=ime, zav=int(id_zav), tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
     if len(str(geslo))<5:
         return template("registracija.html", napaka="Geslo mora vsebovati vsaj pet znakov",a=a,
-        ime=ime, zav=id_zav, tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
+        ime=ime, zav=int(id_zav), tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
     if len(str(tel))<9 or len(str(tel))>9:
         return template("registracija.html", napaka="Prosimo vnesite resnično telefonsko številko",a=a,
-        ime=ime, zav=id_zav, tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
+        ime=ime, zav=int(id_zav), tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
     
     try:
         cur.execute("""INSERT INTO oseba (ime,id_zavarovalnice,telefon,geslo,uporabnisko_ime,administrator) 
@@ -90,7 +90,7 @@ def registracija():
     except psycopg2.DatabaseError as ex:
         baza.rollback()
         return template("registracija.html", a=a, napaka=f"Prišlo je do napake: {ex}",
-        ime=ime, zav=id_zav, tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
+        ime=ime, zav=int(id_zav), tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
 
     redirect(url("izbira"))
 
@@ -242,7 +242,7 @@ def objava():
         redirect(url('prijavno'))
     uporabnik=int(request.get_cookie("administrator",secret=skrivnost))
 
-    return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1, uporabnik=uporabnik,
+    return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1, uporabnik=uporabnik, znamka="", stanje="",oblika="",gorivo="",model="",
         cena=0,kilometri=0,letnik=0)
 
 @post("/objava")
@@ -278,7 +278,7 @@ def objava():
     seznam_modelov1=popravi_seznam1(seznam_modelov)
     seznam_modelov1=[(1,"Izberite")]+seznam_modelov1    
     if model=="Izberite" or znamka=="Izberite" or cena==0 or stanje=="Vse" or oblika=="Vse" or gorivo=="Vse" or letnik==0:
-        return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1,napaka="Prosimo izpolnite vsa polja",uporabnik=uporabnik,
+        return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1,napaka="Prosimo izpolnite vsa polja",uporabnik=uporabnik,model=model,
         znamka=znamka,cena=cena,stanje=stanje,oblika=oblika,kilometri=kilometri,letnik=letnik,gorivo=gorivo)
     try:
         cur.execute("INSERT INTO oglas (id_znamke,cena,stanje,oblika,kilometri,gorivo,letnik,model,id_osebe) VALUES(%s, %s, %s, %s, %s,%s,%s,%s,%s)",
@@ -286,7 +286,7 @@ def objava():
         baza.commit()
     except psycopg2.DatabaseError as ex:
         baza.rollback()
-        return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1,napaka=f"Prišlo je do napake: {ex}", uporabnik=uporabnik,znamka=znamka,
+        return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1,napaka=f"Prišlo je do napake: {ex}", uporabnik=uporabnik,znamka=znamka,model=model,
         cena=cena,stanje=stanje,oblika=oblika,kilometri=kilometri,letnik=letnik,gorivo=gorivo)
 
     if uporabnik==1:
