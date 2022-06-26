@@ -380,7 +380,7 @@ def dodaj_model():
         znamka=int(znamka), dodan_model=dodan_model)
     
     if "Ž" in dodan_model or "ž" in dodan_model or "Š" in dodan_model or "š" in dodan_model or "Č" in dodan_model or "č" in dodan_model:
-        return template("dodaj_model.html", napaka="Ime znamke nesme vključevati šumnikov",a=a,
+        return template("dodaj_model.html", napaka="Ime znamke nesme vključevati šumnikov",seznam_znamk=a,
         znamka=int(znamka), dodan_model=dodan_model)
 
     try:
@@ -389,7 +389,7 @@ def dodaj_model():
         baza.commit()
     except psycopg2.DatabaseError as ex:
         baza.rollback()
-        return template("dodaj_model.html",a=a, napaka=f"Prišlo je do napake: {ex}",
+        return template("dodaj_model.html",seznam_znamk=a, napaka=f"Prišlo je do napake: {ex}",
         znamka=int(znamka), dodan_model=dodan_model)
     redirect(url("izbira_administrator"))
 
