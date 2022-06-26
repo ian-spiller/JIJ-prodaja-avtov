@@ -5,12 +5,12 @@
 <form action="{{url('dodaj_model')}}" method="post">
     <div class="text-center mt-3">
         <label for="znamka">Znamka:</label>
-        <select class="form-select" name="znamka" id="znamka">    
+        <select class="form-select" name="znamka" id="znamka">   
         %for x in seznam_znamk:
             %if x[1]=="Skoda":
                 <option value="15">Škoda</option>
             %else:          
-                <option value="{{x[0]}}">{{x[1]}}</option>
+                <option value="{{x[0]}}" {{'selected' if x[0]== znamka else '' }}>{{x[1]}}</option>
             %end
         %end
         </select>

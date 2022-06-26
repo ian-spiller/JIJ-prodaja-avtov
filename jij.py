@@ -365,7 +365,7 @@ def dodaj_model():
 
     cur.execute("SELECT id , ime_znamke FROM znamka")
     a=cur.fetchall()
-    return template("dodaj_model.html",seznam_znamk=a,dodan_model="")
+    return template("dodaj_model.html",seznam_znamk=a,dodan_model="",znamka=None)
 
 @post("/dodaj_model")
 def dodaj_model():
@@ -377,11 +377,11 @@ def dodaj_model():
 
     if dodan_model=="":
         return template("dodaj_model.html",seznam_znamk=a,napaka="Prosimo izpolnite vsa polja",
-        znamka=znamka, dodan_model=dodan_model)
+        znamka=int(znamka), dodan_model=dodan_model)
     
     if "Ž" in dodan_model or "ž" in dodan_model or "Š" in dodan_model or "š" in dodan_model or "Č" in dodan_model or "č" in dodan_model:
         return template("dodaj_model.html", napaka="Ime znamke nesme vključevati šumnikov",a=a,
-        znamka=znamka, dodan_model=dodan_model)
+        znamka=int(znamka), dodan_model=dodan_model)
 
     try:
         cur.execute("INSERT INTO modeli VALUES(%s, %s)",
@@ -390,7 +390,7 @@ def dodaj_model():
     except psycopg2.DatabaseError as ex:
         baza.rollback()
         return template("dodaj_model.html",a=a, napaka=f"Prišlo je do napake: {ex}",
-        znamka=znamka, dodan_model=dodan_model)
+        znamka=int(znamka), dodan_model=dodan_model)
     redirect(url("izbira_administrator"))
 
 @get("/dodaj_administratorja")
@@ -401,7 +401,7 @@ def dodaj_administratorja():
     
     cur.execute("SELECT uporabnisko_ime FROM oseba WHERE administrator=0")
     a=cur.fetchall()
-    return template("dodaj_administratorja.html",seznam_oseb=a)
+    return template("dodaj_administratorja.html",seznam_oseb=a,oseba="")
 
 @post("/dodaj_administratorja")
 def dodaj_administratorja():

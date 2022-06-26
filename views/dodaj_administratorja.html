@@ -8,7 +8,7 @@
             <label for="oseba">Uporabnik:</label>
             <select class="form-select" name="oseba" id="oseba">    
             %for x in seznam_oseb:        
-                <option value="{{x[0]}}">{{x[0]}}</option>
+                <option value="{{x[0]}}" {{'selected' if x[0]== oseba else '' }}>{{x[0]}}</option>
             %end
             </select>
         </div>
