@@ -46,19 +46,13 @@ def odjava():
 def registracija():
     cur.execute("SELECT id , ime_zavarovalnice FROM zavarovalnica")
     a=cur.fetchall()
-    return template("registracija.html",a=a,ime="",uporabnisko_ime="",geslo="",tel="",zav=1)
+    return template("registracija.html",a=a,ime="",uporabnisko_ime="",geslo="",tel="", zav=None)
 
 @post("/registracija")
 def registracija():
     ime=request.forms.ime
-    ime=ime.encode("ISO-8859-1")
-    ime=ime.decode("utf-8")
     uporabnisko_ime=request.forms.uporabnisko_ime
-    uporabnisko_ime=uporabnisko_ime.encode("ISO-8859-1")
-    uporabnisko_ime=uporabnisko_ime.decode("utf-8")
     geslo=request.forms.geslo
-    geslo=geslo.encode("ISO-8859-1")
-    geslo=geslo.decode("utf-8")
     tel=request.forms.tel
     id_zav=request.forms.zav
     cur.execute("SELECT id , ime_zavarovalnice FROM zavarovalnica")

@@ -20,9 +20,9 @@
         </div>
         <div class="text-center mt-3 mb-3">
             <label for="zav">Zavarovlnica:</label>
-            <select class="form-select" name="zav" id="zav">    
-                %for x in a:        
-                    <option value="{{x[0]}}">{{x[1]}}</option>
+            <select class="form-select" name="zav" id="zav">
+                %for id, zavarovalnica in a:
+                    <option value="{{id}}" {{'selected' if id == zav else ''}}>{{zavarovalnica}}</option>
                 %end
             </select>
         </div>
