@@ -283,7 +283,7 @@ def objava():
     seznam_modelov=cur.fetchall()
     seznam_modelov1=popravi_seznam1(seznam_modelov)
     seznam_modelov1=[(1,"Izberite")]+seznam_modelov1    
-    if model=="Izberite" or znamka=="" or cena=="" or stanje=="" or oblika=="" or kilometri=="" or gorivo=="" or letnik=="":
+    if model=="Izberite" or znamka=="Izberite" or cena==0 or stanje=="Vse" or oblika=="Vse" or gorivo=="Vse" or letnik==0:
         return template("objava.html",znamkeid=a,seznam_modelov=seznam_modelov1,napaka="Prosimo izpolnite vsa polja",uporabnik=uporabnik,
         znamka=znamka,cena=cena,stanje=stanje,oblika=oblika,kilometri=kilometri,letnik=letnik,gorivo=gorivo)
     try:
