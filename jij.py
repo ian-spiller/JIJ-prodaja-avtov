@@ -448,9 +448,9 @@ def brisanje_modela():
     print(b)
     print(model)
     if len(c)==1 and nov_model=="":
-        return template("brisanje_oglasa.html",seznam_modelov=seznam_modelov,znamkeid=a,napaka="Prosimo izpolnite vsa polja",znamka=znamka)
+        return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a,napaka="Prosimo izpolnite vsa polja",znamka=znamka)
     if model=="": 
-        return template("brisanje_oglasa.html",seznam_modelov=seznam_modelov,znamkeid=a,napaka="Prosimo izpolnite vsa polja",znamka=znamka)
+        return template("brisanje_modela.html",seznam_modelov=seznam_modelov,znamkeid=a,napaka="Prosimo izpolnite vsa polja",znamka=znamka)
     if len(c)==1 and nov_model!="":
         try:
             cur.execute("INSERT INTO modeli VALUES(%s, %s)",
