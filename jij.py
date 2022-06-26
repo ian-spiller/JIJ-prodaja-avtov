@@ -1,6 +1,7 @@
 from pickle import FALSE, TRUE
 from bottleext import *
 import psycopg2
+import hashlib
 
 import os
 SERVER_PORT = os.environ.get('BOTTLE_PORT', 8080)
@@ -78,7 +79,8 @@ def registracija():
     if len(str(tel))<9 or len(str(tel))>9:
         return template("registracija.html", napaka="Prosimo vnesite resnično telefonsko številko",a=a,
         ime=ime, zav=int(id_zav), tel=tel, geslo=geslo, uporabnisko_ime=uporabnisko_ime)
-    
+    geslo=hashGesla(geslo)
+
     try:
         cur.execute("""INSERT INTO oseba (ime,id_zavarovalnice,telefon,geslo,uporabnisko_ime,administrator) 
             VALUES(%(ime)s, %(zav)s, %(tel)s, %(geslo)s, %(uporabnisko_ime)s,%(administrator)s) RETURNING id""", 
@@ -122,6 +124,7 @@ def filter():
     if cookie is None:
         redirect(url('prijavno'))
     uporabnik=request.get_cookie("administrator",secret=skrivnost)
+    print(uporabnik)
 
     return template("filter.html",znamkeid=a,seznam_modelov=seznam_modelov1,uporabnik=uporabnik)
 
@@ -471,6 +474,11 @@ def brisanje_modela():
         znamka=znamka,model=model)
     redirect(url("izbira_administrator"))
 
+def hashGesla(s):
+    m = hashlib.sha256()
+    m.update(s.encode("utf-8"))
+    return m.hexdigest()
+
 def preveri_uporab_ime(ime):
     cur.execute("SELECT uporabnisko_ime FROM oseba")
     a=cur.fetchall()
@@ -482,7 +490,7 @@ def preveri(ime,geslo):
     cur.execute("SELECT uporabnisko_ime , geslo FROM oseba")
     a=cur.fetchall()
     for x in a:
-        if x[0]==ime and x[1]==geslo:
+        if x[0]==ime and x[1]==hashGesla(geslo):
             return TRUE
 
 def popravi_seznam(seznam):

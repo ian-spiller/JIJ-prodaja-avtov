@@ -8,8 +8,8 @@
 
   <body>
     <div class="container bg-dark text-white rounded">
-
-    %if uporabnik==1:
+        
+    %if int(uporabnik)==1:
     <div class="container">
         <div class="row justify-content-around">
           <div class="col-3 mt-5">
@@ -28,7 +28,7 @@
     </div>
     %end
 
-    %if uporabnik==0:
+    %if int(uporabnik)==0:
     <div class="container">
         <div class="row justify-content-around">
           <div class="col-3 mt-5">
