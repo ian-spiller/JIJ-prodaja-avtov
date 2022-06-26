@@ -10,12 +10,13 @@
                     %if x[1]=="Skoda":
                         <option value="Skoda">Škoda</option>
                     %else:        
-                        <option value="{{x[1]}}">{{x[1]}}</option>
+                        <option value="{{x[1]}}"{{'selected' if x[1]== znamka else '' }}>{{x[1]}}</option>
                     %end
                 %end
             </select>
         </div>
 
+        %if znamka=="":
         <div class="text-center mt-3" id="testVolkswagen">
             <label for="modelVolkswagen">Model:</label>
             <select class="form-select" name="modelVolkswagen" id="modelVolkswagen"> 
@@ -49,6 +50,55 @@
             %end
             </select>
             </div>
+        %end
+
+        %else:
+        
+        %seznam=[]
+        %for z in seznam_modelov: 
+            %seznam=seznam+[str(z[0])]
+        %end
+        <div class="text-center mt-3" id="test{{znamka}}">
+
+            %for z in znamkeid:
+            %if z[1]==znamka:
+            %a=z[0]
+            %end
+            %end
+            %if seznam.count(str(a))==1:
+            <div class="text-center mt-3">
+                <label for="novmodel{{znamka}}">Ker imamo shranjen samo en model te znamke morate dodati novega preden izbrišete starega:</label>
+                <input class="form-control" id="novmodel{{znamka}}" name="novmodel{{znamka}}" type="text" />
+            </div>
+            %end
+            <label for="model{{znamka}}">Model:</label>
+            <select class="form-select" name="model{{znamka}}" id="model{{znamka}}"> 
+            %for y in seznam_modelov:
+                %if y[0]==a:      
+                    <option value="{{y[1]}}" {{'selected' if y[1]== model else '' }}>{{y[1]}}</option>
+                %end
+            %end
+            </select>
+        </div>
+
+        %for x in znamkeid:
+            <div class="text-center mt-3" id="test{{x[1]}}" style="display: none">
+            %if seznam.count(str(x[0]))==1:
+            <div class="text-center mt-3">
+                <label for="novmodel{{x[1]}}">Ker imamo shranjen samo en model te znamke morate dodati novega preden izbrišete starega:</label>
+                <input class="form-control" id="novmodel{{x[1]}}" name="novmodel{{x[1]}}" type="text" />
+            </div>
+            %end
+            <label for="model{{x[1]}}">Model:</label>
+            <select class="form-select" name="model{{x[1]}}" id="model{{x[1]}}"> 
+            %for y in seznam_modelov:
+                %if y[0]==x[0]:      
+                    <option value="{{y[1]}}">{{y[1]}}</option>
+                %end
+            %end
+            </select>
+            </div>
+        %end
         %end
 
         <p id="seznam_znamk" style="display: none">
