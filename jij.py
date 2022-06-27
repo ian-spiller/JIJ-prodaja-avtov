@@ -107,9 +107,10 @@ def izbira():
 @get("/izbira_administrator")
 def izbira_administrator():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
+    uporabnik=request.get_cookie("administrator",secret=skrivnost)
     if cookie is None:
         redirect(url('prijavno'))
-    if int(cookie)==0:
+    if int(uporabnik)==0:
         redirect(url('izbira'))
     return template("izbira_administrator.html")
 
@@ -268,8 +269,8 @@ def objava():
             znamka_id=x[0]
 
     model="Izberite"
-    if request.forms.get("model{}".format(znamka)) !="Izberite":
-        model=request.forms.get("model{}".format(znamka))
+    if getattr(request.forms, "model{}".format(znamka)) !="Izberite":
+        model=getattr(request.forms, "model{}".format(znamka))
 
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
@@ -303,9 +304,10 @@ def objava():
 def dodaj_znamko():
     cur.execute("SELECT id,ime_serviserja FROM serviser")
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
+    uporabnik=request.get_cookie("administrator",secret=skrivnost)
     if cookie is None:
         redirect(url('prijavno'))
-    if int(cookie)==0:
+    if int(uporabnik)==0:
         redirect(url('izbira'))
     a=cur.fetchall()
     return template("dodaj_znamko.html",podatki_serviserja=a,dodana_znamka="", model="",id_serviserja=None)
@@ -367,9 +369,10 @@ def dodaj_znamko():
 @get("/dodaj_model")
 def dodaj_model():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
+    uporabnik=request.get_cookie("administrator",secret=skrivnost)
     if cookie is None:
         redirect(url('prijavno'))
-    if int(cookie)==0:
+    if int(uporabnik)==0:
         redirect(url('izbira'))
 
     cur.execute("SELECT id , ime_znamke FROM znamka")
@@ -406,9 +409,10 @@ def dodaj_model():
 @get("/dodaj_administratorja")
 def dodaj_administratorja():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
+    uporabnik=request.get_cookie("administrator",secret=skrivnost)
     if cookie is None:
         redirect(url('prijavno'))
-    if int(cookie)==0:
+    if int(uporabnik)==0:
         redirect(url('izbira'))
     
     cur.execute("SELECT uporabnisko_ime FROM oseba WHERE administrator=0")
@@ -433,9 +437,10 @@ def dodaj_administratorja():
 @get("/brisanje_modela")
 def brisanje_modela():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
+    uporabnik=request.get_cookie("administrator",secret=skrivnost)
     if cookie is None:
         redirect(url('prijavno'))
-    if int(cookie)==0:
+    if int(uporabnik)==0:
         redirect(url('izbira'))
 
     cur.execute("SELECT id , ime_znamke FROM znamka")
@@ -447,8 +452,8 @@ def brisanje_modela():
 @post("/brisanje_modela")
 def brisanje_modela():
     znamka=request.forms.znamka
-    model=request.forms.get("model{}".format(znamka))
-    nov_model=request.forms.get("novmodel{}".format(znamka))
+    model=getattr(request.forms, "model{}".format(znamka))
+    nov_model=getattr(request.forms, "novmodel{}".format(znamka))
 
     cur.execute("SELECT id , ime_znamke FROM znamka")
     a=cur.fetchall()
