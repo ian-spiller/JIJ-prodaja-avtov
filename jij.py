@@ -109,6 +109,8 @@ def izbira_administrator():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
         redirect(url('prijavno'))
+    if int(cookie)==0:
+        redirect(url('izbira'))
     return template("izbira_administrator.html")
 
 @get("/filter")
@@ -303,13 +305,15 @@ def dodaj_znamko():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
         redirect(url('prijavno'))
+    if int(cookie)==0:
+        redirect(url('izbira'))
     a=cur.fetchall()
     return template("dodaj_znamko.html",podatki_serviserja=a,dodana_znamka="", model="",id_serviserja=None)
 
 @post("/dodaj_znamko")
 def dodaj_znamko():
     dodana_znamka=request.forms.dodana_znamka
-    model=request.forms.get("model")
+    model=request.forms.model
     id_serviserja=request.forms.id_serviserja
     
     cur.execute("SELECT id,ime_serviserja FROM serviser")
@@ -365,6 +369,8 @@ def dodaj_model():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
         redirect(url('prijavno'))
+    if int(cookie)==0:
+        redirect(url('izbira'))
 
     cur.execute("SELECT id , ime_znamke FROM znamka")
     a=cur.fetchall()
@@ -377,6 +383,7 @@ def dodaj_model():
 
     cur.execute("SELECT id , ime_znamke FROM znamka")
     a=cur.fetchall()
+    
 
     if dodan_model=="":
         return template("dodaj_model.html",seznam_znamk=a,napaka="Prosimo izpolnite vsa polja",
@@ -401,6 +408,8 @@ def dodaj_administratorja():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
         redirect(url('prijavno'))
+    if int(cookie)==0:
+        redirect(url('izbira'))
     
     cur.execute("SELECT uporabnisko_ime FROM oseba WHERE administrator=0")
     a=cur.fetchall()
@@ -426,6 +435,8 @@ def brisanje_modela():
     cookie=request.get_cookie("id_uporabnika",secret=skrivnost)
     if cookie is None:
         redirect(url('prijavno'))
+    if int(cookie)==0:
+        redirect(url('izbira'))
 
     cur.execute("SELECT id , ime_znamke FROM znamka")
     a=cur.fetchall()
